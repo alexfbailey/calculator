@@ -85,48 +85,53 @@
   .calculator { width:100%; height:100%; background:var(--accent); display:flex; flex-direction:column; position:relative; overflow:hidden; }
 
   .status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; height:58px; flex-shrink:0; }
-  .status-time { font-size:16px; font-weight:600; color:#2a2a2a; }
+  .status-time { font-size:16px; font-weight:600; color:var(--icon-fill); }
   .status-icons { display:flex; align-items:center; gap:6px; }
-  .status-icons svg { fill:#2a2a2a; }
+  .status-icons { color:var(--icon-fill); } .status-icons svg { fill:var(--icon-fill); }
 
   .category-bar { display:flex; justify-content:center; align-items:center; padding:6px 20px 2px; flex-shrink:0; }
-  .category-label { background:none; border:none; color:#1a1a1a; font-size:18px; font-weight:600; cursor:pointer; padding:6px 14px; border-radius:20px; display:flex; align-items:center; gap:5px; }
+  .category-label { background:none; border:none; color:var(--text-primary); font-size:18px; font-weight:600; cursor:pointer; padding:6px 14px; border-radius:20px; display:flex; align-items:center; gap:5px; }
   .category-label:active { opacity:0.5; }
   .category-label .cat-chevron { font-size:10px; opacity:0.5; }
 
   .top-bar { display:flex; justify-content:space-between; align-items:center; padding:4px 20px; flex-shrink:0; }
-  .top-btn { width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.12); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .top-btn svg { fill:#2a2a2a; }
+  .top-btn { width:40px; height:40px; border-radius:50%; background:var(--btn-bg); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--icon-fill); }
+  .top-btn svg { fill:var(--icon-fill); }
   .top-spacer { width:40px; }
 
   .display-area { flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:0 24px 16px; }
-  .currency-row { display:flex; align-items:baseline; justify-content:flex-end; gap:8px; }
+  .currency-row { display:flex; align-items:baseline; justify-content:flex-end; gap:8px; position:relative; }
   .currency-row.from { margin-bottom:4px; }
-  .currency-value { font-size:70px; font-weight:300; color:#1a1a1a; letter-spacing:-1px; line-height:1.1; transition:font-size 0.15s ease; cursor:pointer; }
+  .row-label { position:absolute; left:0; top:50%; transform:translateY(-50%); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); }
+  .currency-value { font-size:70px; font-weight:300; color:var(--text-primary); letter-spacing:-1px; line-height:1.1; transition:font-size 0.15s ease; cursor:pointer; }
+  .currency-value.hint { font-size:24px; color:var(--text-muted); font-weight:400; letter-spacing:0; }
+  .currency-value.not-found { font-size:20px; color:var(--text-muted); font-weight:400; letter-spacing:0; }
+  .copy-toast { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.7); color:#fff; padding:8px 18px; border-radius:10px; font-size:14px; font-weight:500; z-index:50; pointer-events:none; opacity:0; transition:opacity 0.3s; }
+  .copy-toast.visible { opacity:1; }
   .currency-value.smaller { font-size:50px; }
   .currency-value.smallest { font-size:38px; }
   .currency-code { font-size:22px; font-weight:400; color:var(--accent-dark); display:flex; align-items:center; gap:3px; flex-shrink:0; cursor:pointer; }
   .currency-code .chevron { font-size:12px; opacity:0.6; }
-  .currency-row.active .currency-code { color:#2a2a2a; }
+  .currency-row.active .currency-code { color:var(--icon-fill); }
 
   .swap-divider { display:flex; align-items:center; padding:10px 0; gap:12px; }
-  .swap-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; }
-  .swap-btn svg { fill:#2a2a2a; }
-  .divider-line { flex:1; height:0.5px; background:rgba(0,0,0,0.15); }
+  .swap-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; color:var(--icon-fill); }
+  .swap-btn svg { fill:var(--icon-fill); }
+  .divider-line { flex:1; height:0.5px; background:var(--border-divider); }
 
   .keypad { padding:0 12px 8px; display:flex; flex-direction:column; gap:12px; flex-shrink:0; }
   .key-row { display:flex; gap:12px; justify-content:center; }
   .key { width:80px; height:80px; border-radius:50%; border:none; font-size:32px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.1s; -webkit-font-smoothing:antialiased; }
   .key:active { opacity:0.6; }
-  .key-number { background:rgba(255,255,255,0.55); color:#1a1a1a; }
-  .key-number:active { background:rgba(255,255,255,0.8); opacity:1; }
-  .key-function { background:rgba(255,255,255,0.75); color:#1a1a1a; font-size:28px; }
-  .key-function:active { background:rgba(255,255,255,0.95); opacity:1; }
+  .key-number { background:var(--bg-key); color:var(--text-primary); }
+  .key-number:active { background:var(--bg-key-active); opacity:1; }
+  .key-function { background:var(--bg-key-fn); color:var(--text-primary); font-size:28px; }
+  .key-function:active { background:var(--bg-key-fn-active); opacity:1; }
   .key svg { width:28px; height:28px; }
-  .key-function svg { fill:#1a1a1a; }
+  .key-function svg { fill:var(--text-primary); }
 
   .home-indicator { flex-shrink:0; display:flex; justify-content:center; padding:8px 0 10px; }
-  .home-indicator-bar { width:134px; height:5px; background:#1a1a1a; border-radius:3px; opacity:0.2; }
+  .home-indicator-bar { width:134px; height:5px; background:var(--text-primary); border-radius:3px; opacity:var(--home-bar-opacity); }
 
   /* Modal overlay */
   .modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.25); display:none; z-index:10; }
@@ -136,68 +141,75 @@
   .sheet { position:absolute; bottom:0; left:0; right:0; background:var(--picker-bg); border-radius:14px 14px 0 0; max-height:70%; display:flex; flex-direction:column; z-index:11; transform:translateY(100%); transition:transform 0.3s ease; }
   .sheet.visible { transform:translateY(0); }
   .sheet-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:0.5px solid rgba(0,0,0,0.1); }
-  .sheet-header span { color:#1a1a1a; font-size:17px; font-weight:600; }
-  .sheet-close { background:rgba(0,0,0,0.1); border:none; color:#1a1a1a; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .sheet-header span { color:var(--text-primary); font-size:17px; font-weight:600; }
+  .sheet-close { background:var(--sheet-close-bg); border:none; color:var(--text-primary); width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .sheet-list { overflow-y:auto; flex:1; -webkit-overflow-scrolling:touch; }
 
   .picker-item { display:flex; align-items:center; padding:14px 20px; cursor:pointer; gap:14px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
   .picker-item:active { background:rgba(0,0,0,0.05); }
   .picker-item .flag { font-size:28px; }
   .picker-item .info { flex:1; }
-  .picker-item .info .code { color:#1a1a1a; font-size:17px; font-weight:500; }
+  .picker-item .info .code { color:var(--text-primary); font-size:17px; font-weight:500; }
   .picker-item .info .name { color:var(--accent-dark); font-size:13px; }
-  .picker-item .check { color:#2a2a2a; font-size:20px; font-weight:600; display:none; }
+  .picker-item .check { color:var(--icon-fill); font-size:20px; font-weight:600; display:none; }
   .picker-item.selected .check { display:block; }
 
   .cat-item { display:flex; align-items:center; padding:15px 20px; cursor:pointer; gap:14px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
   .cat-item:active { background:rgba(0,0,0,0.05); }
   .cat-item .cat-icon { font-size:24px; }
-  .cat-item .cat-name { flex:1; color:#1a1a1a; font-size:17px; font-weight:500; }
-  .cat-item .check { color:#2a2a2a; font-size:20px; font-weight:600; display:none; }
+  .cat-item .cat-name { flex:1; color:var(--text-primary); font-size:17px; font-weight:500; }
+  .cat-item .check { color:var(--icon-fill); font-size:20px; font-weight:600; display:none; }
   .cat-item.selected .check { display:block; }
 
-  .section-title { color:rgba(0,0,0,0.45); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; padding:20px 20px 8px; }
-  .cat-group-header { color:#1a1a1a; font-size:20px; font-weight:700; padding:20px 20px 10px; border-bottom:1.5px solid rgba(0,0,0,0.08); }
+  .section-title { color:var(--text-muted); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; padding:20px 20px 8px; }
+  .cat-group-header { color:var(--text-primary); font-size:20px; font-weight:700; padding:20px 20px 10px; border-bottom:1.5px solid rgba(0,0,0,0.08); }
 
   /* Search bar */
   .search-bar { padding:12px 16px 8px; }
-  .search-input { width:100%; padding:10px 14px; border-radius:10px; border:none; background:rgba(0,0,0,0.06); font-size:16px; color:#1a1a1a; outline:none; font-family:inherit; }
-  .search-input::placeholder { color:rgba(0,0,0,0.3); }
-  .search-no-results { padding:20px; text-align:center; color:rgba(0,0,0,0.35); font-size:15px; }
+  .search-input { width:100%; padding:10px 14px; border-radius:10px; border:none; background:var(--bg-subtle); font-size:16px; color:var(--text-primary); outline:none; font-family:inherit; }
+  .search-input::placeholder { color:var(--text-dim); }
+  .search-no-results { padding:20px; text-align:center; color:var(--text-dim); font-size:15px; }
 
   /* Full screen pages (menu, settings, about, privacy, terms, feedback) */
   .fullscreen-page { position:absolute; inset:0; background:var(--accent); z-index:30; display:none; flex-direction:column; }
   .fullscreen-page.visible { display:flex; }
   .fs-header { display:flex; align-items:center; padding:60px 24px 16px; gap:12px; }
-  .fs-back-btn { width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.1); border:none; color:#1a1a1a; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .fs-back-btn { width:36px; height:36px; border-radius:50%; background:var(--btn-bg); border:none; color:var(--text-primary); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
   .fs-back-btn:active { opacity:0.5; }
-  .fs-header-title { font-size:28px; font-weight:700; color:#1a1a1a; flex:1; }
+  .fs-header-title { font-size:28px; font-weight:700; color:var(--text-primary); flex:1; }
   .fs-content { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 0 40px; }
 
   .menu-list { flex:1; overflow-y:auto; padding:0 0 40px; }
   .menu-item { display:flex; align-items:center; padding:16px 24px; cursor:pointer; gap:16px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
   .menu-item:active { background:rgba(0,0,0,0.05); }
-  .menu-item .menu-icon { width:36px; height:36px; border-radius:10px; background:rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; font-size:18px; }
-  .menu-item .menu-label { flex:1; color:#1a1a1a; font-size:17px; font-weight:400; }
-  .menu-item .menu-arrow { color:rgba(0,0,0,0.25); font-size:18px; }
-  .menu-version { text-align:center; padding:20px; color:rgba(0,0,0,0.25); font-size:13px; }
+  .menu-item .menu-icon { width:36px; height:36px; border-radius:10px; background:var(--bg-subtle); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .menu-item .menu-label { flex:1; color:var(--text-primary); font-size:17px; font-weight:400; }
+  .menu-item .menu-arrow { color:var(--text-faint); font-size:18px; }
+  .menu-version { text-align:center; padding:20px; color:var(--text-faint); font-size:13px; }
 
   /* Color grid */
   .color-grid { display:flex; flex-wrap:wrap; gap:12px; padding:20px; justify-content:center; }
   .color-swatch { width:52px; height:52px; border-radius:50%; border:3px solid transparent; cursor:pointer; transition:border-color 0.15s, transform 0.15s; position:relative; }
   .color-swatch:active { transform:scale(0.9); }
-  .color-swatch.active { border-color:#1a1a1a; }
+  .color-swatch.active { border-color:var(--text-primary); }
   .color-swatch.active::after { content:'\2713'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,0.4); }
-  .settings-info { color:rgba(0,0,0,0.4); font-size:13px; padding:8px 20px 0; line-height:1.4; }
+  .settings-info { color:var(--text-muted); font-size:13px; padding:8px 20px 0; line-height:1.4; }
+
+  /* Size chart table */
+  .size-chart-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .size-chart-table th { position:sticky; top:0; background:var(--picker-bg); color:var(--text-primary); font-size:12px; font-weight:600; padding:10px 8px; text-align:center; border-bottom:1.5px solid var(--border-divider); z-index:1; }
+  .size-chart-table td { padding:8px 6px; text-align:center; color:var(--text-secondary); border-bottom:0.5px solid var(--border-light); font-size:13px; }
+  .size-chart-table tr:nth-child(even) td { background:var(--bg-subtle); }
+  .size-chart-table td.highlight { color:var(--text-primary); font-weight:600; background:rgba(0,0,0,0.06); }
 
   /* Size option dropdown pill */
   .size-dropdown-pill {
     display:flex; align-items:center; justify-content:center; gap:6px;
     width:264px; height:48px; border-radius:24px; border:none;
-    background:rgba(255,255,255,0.55); color:#1a1a1a; font-size:15px; font-weight:600;
+    background:var(--bg-key); color:var(--text-primary); font-size:15px; font-weight:600;
     cursor:pointer; font-family:inherit; transition:opacity 0.1s;
   }
-  .size-dropdown-pill:active { background:rgba(255,255,255,0.8); }
+  .size-dropdown-pill:active { background:var(--bg-key-active); }
   .size-dropdown-pill .pill-chevron { font-size:10px; opacity:0.45; }
   #sizeOptionRow { justify-content:center; }
 
@@ -205,17 +217,17 @@
   .feedback-form { padding:0 24px; }
   .feedback-textarea {
     width:100%; min-height:160px; padding:14px 16px; border-radius:12px; border:none;
-    background:rgba(0,0,0,0.06); color:#1a1a1a; font-size:16px; font-family:inherit;
+    background:var(--bg-subtle); color:var(--text-primary); font-size:16px; font-family:inherit;
     outline:none; resize:none; -webkit-overflow-scrolling:touch;
   }
-  .feedback-textarea::placeholder { color:rgba(0,0,0,0.3); }
+  .feedback-textarea::placeholder { color:var(--text-dim); }
   .feedback-send-btn {
     width:calc(100% - 48px); margin:16px 24px; padding:16px; border-radius:14px; border:none;
-    background:rgba(0,0,0,0.12); color:#1a1a1a; font-size:17px; font-weight:600;
+    background:var(--btn-bg); color:var(--text-primary); font-size:17px; font-weight:600;
     cursor:pointer; font-family:inherit; transition:opacity 0.15s;
   }
   .feedback-send-btn:active { opacity:0.6; }
-  .feedback-sent-msg { text-align:center; padding:40px 24px; color:rgba(0,0,0,0.5); font-size:15px; display:none; }
+  .feedback-sent-msg { text-align:center; padding:40px 24px; color:var(--text-muted); font-size:15px; display:none; }
   .feedback-sent-msg.visible { display:block; }
 
   /* Onboarding tooltip */
@@ -232,11 +244,11 @@
   .onboarding-bubble.arrow-top::after { top:-7px; left:50%; margin-left:-8px; }
   .onboarding-bubble.arrow-bottom::after { bottom:-7px; left:50%; margin-left:-8px; }
   .onboarding-bubble.arrow-right::after { right:-7px; top:50%; margin-top:-8px; }
-  .ob-step { color:rgba(0,0,0,0.35); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-  .ob-title { color:#1a1a1a; font-size:16px; font-weight:700; margin-bottom:4px; }
+  .ob-step { color:var(--text-dim); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .ob-title { color:var(--text-primary); font-size:16px; font-weight:700; margin-bottom:4px; }
   .ob-desc { color:rgba(0,0,0,0.55); font-size:14px; line-height:1.4; margin-bottom:14px; }
   .ob-actions { display:flex; justify-content:space-between; align-items:center; }
-  .ob-skip { color:rgba(0,0,0,0.35); font-size:14px; cursor:pointer; }
+  .ob-skip { color:var(--text-dim); font-size:14px; cursor:pointer; }
   .ob-skip:active { opacity:0.5; }
   .ob-next {
     padding:8px 20px; border-radius:10px; border:none;
@@ -251,8 +263,8 @@
   /* Settings default country picker */
   .setting-row { display:flex; align-items:center; padding:14px 20px; border-bottom:0.5px solid rgba(0,0,0,0.08); cursor:pointer; gap:12px; }
   .setting-row:active { background:rgba(0,0,0,0.03); }
-  .setting-label { flex:1; color:#1a1a1a; font-size:16px; }
-  .setting-value { color:rgba(0,0,0,0.4); font-size:16px; display:flex; align-items:center; gap:4px; }
+  .setting-label { flex:1; color:var(--text-primary); font-size:16px; }
+  .setting-value { color:var(--text-muted); font-size:16px; display:flex; align-items:center; gap:4px; }
   .setting-chevron { font-size:12px; opacity:0.4; }
 </style>
 </head>
@@ -266,36 +278,40 @@
         <div class="status-icons">
           <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="1" width="3" height="11" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5"/></svg>
           <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.4L14 4C12.4 2.5 10.3 1.6 8 1.6S3.6 2.5 2 4L3.4 5.4C4.6 4.3 6.2 3.6 8 3.6ZM8 7.2C9 7.2 9.9 7.6 10.6 8.2L12 6.8C10.9 5.8 9.5 5.2 8 5.2S5.1 5.8 4 6.8L5.4 8.2C6.1 7.6 7 7.2 8 7.2ZM9.4 10.4L8 12L6.6 10.4C7 9.9 7.5 9.6 8 9.6S9 9.9 9.4 10.4Z"/></svg>
-          <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0" y="1" width="22" height="11" rx="2" stroke="#2a2a2a" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="5" rx="0.5" fill="#2a2a2a" opacity="0.35"/><rect x="1.5" y="2.5" width="19" height="8" rx="1" fill="#2a2a2a"/></svg>
+          <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0" y="1" width="22" height="11" rx="2" stroke="currentColor" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="5" rx="0.5" fill="currentColor" opacity="0.35"/><rect x="1.5" y="2.5" width="19" height="8" rx="1" fill="currentColor"/></svg>
         </div>
       </div>
 
       <div class="category-bar">
         <button class="category-label" onclick="openCategoryPicker()" id="categoryLabel">
-          Dress <span class="cat-chevron">&#x25BC;</span>
+          Women's Dress <span class="cat-chevron">&#x25BC;</span>
         </button>
       </div>
 
       <div class="top-bar">
-        <div class="top-spacer"></div>
+        <button class="top-btn" aria-label="Size Chart" onclick="openSizeChart()">
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M2 3h16v14H2V3zm0 4h16m-12-4v14m4-14v14m4-14v14" stroke="var(--icon-fill)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        </button>
         <button class="top-btn" aria-label="Menu" onclick="openPage('menuPage')">
-          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="#2a2a2a" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
         </button>
       </div>
 
       <div class="display-area">
         <div class="currency-row to" id="toRow">
-          <span class="currency-value" id="toValue" onclick="openPicker('to')">12</span>
+          <span class="row-label" id="toLabel">TO</span>
+          <span class="currency-value" id="toValue" onclick="copyResult(this)">—</span>
           <span class="currency-code" id="toCode" onclick="openPicker('to')">UK <span class="chevron">&#x25C7;</span></span>
         </div>
         <div class="swap-divider">
           <button class="swap-btn" onclick="swapSystems()" aria-label="Swap">
-            <svg width="22" height="22" viewBox="0 0 22 22"><path d="M7 2L7 18M7 2L3 6M7 2L11 6M15 20L15 4M15 20L11 16M15 20L19 16" stroke="#2a2a2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+            <svg width="22" height="22" viewBox="0 0 22 22"><path d="M7 2L7 18M7 2L3 6M7 2L11 6M15 20L15 4M15 20L11 16M15 20L19 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
           </button>
           <div class="divider-line"></div>
         </div>
         <div class="currency-row from active" id="fromRow">
-          <span class="currency-value" id="fromValue" onclick="openPicker('from')">8</span>
+          <span class="row-label" id="fromLabel">FROM</span>
+          <span class="currency-value" id="fromValue" onclick="copyResult(this)">0</span>
           <span class="currency-code" id="fromCode" onclick="openPicker('from')">CA/US <span class="chevron">&#x25C7;</span></span>
         </div>
       </div>
@@ -320,7 +336,7 @@
           <button class="key key-function" id="bottomLeftKey" onclick="handleClear()">C</button>
           <button class="key key-number" onclick="handleNumber('0')">0</button>
           <button class="key key-function" id="backspaceKey" onclick="handleBackspace()">
-            <svg viewBox="0 0 28 28" width="28" height="28"><path d="M10.7 5L2 14l8.7 9H26V5H10.7z" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linejoin="round"/><line x1="14.5" y1="10" x2="21.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/><line x1="21.5" y1="10" x2="14.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 28 28" width="28" height="28"><path d="M10.7 5L2 14l8.7 9H26V5H10.7z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><line x1="14.5" y1="10" x2="21.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="21.5" y1="10" x2="14.5" y2="17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
         </div>
         <div class="key-row" id="sizeOptionRow" style="display:none;">
@@ -410,13 +426,13 @@
           <button class="fs-back-btn" onclick="closePage('aboutPage')">&#x2039;</button>
           <span class="fs-header-title">About</span>
         </div>
-        <div class="fs-content" style="padding:24px 20px;color:#1a1a1a;">
+        <div class="fs-content" style="padding:24px 20px;color:var(--text-primary);">
           <div style="text-align:center;margin-bottom:20px;">
             <div style="font-size:48px;margin-bottom:8px;">&#x1F457;</div>
             <div style="font-size:22px;font-weight:600;">Clothing Size Converter</div>
-            <div style="font-size:14px;color:rgba(0,0,0,0.4);margin-top:4px;">Version 1.0.0</div>
+            <div style="font-size:14px;color:var(--text-muted);margin-top:4px;">Version 1.0.0</div>
           </div>
-          <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);text-align:center;">Instantly convert clothing sizes between international sizing systems. Supports Women's &amp; Men's categories across 10 regional standards.</p>
+          <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);text-align:center;">Instantly convert clothing sizes between international sizing systems. Supports Women's &amp; Men's categories across 10 regional standards.</p>
         </div>
       </div>
 
@@ -426,15 +442,15 @@
           <button class="fs-back-btn" onclick="closePage('privacyPage')">&#x2039;</button>
           <span class="fs-header-title">Privacy</span>
         </div>
-        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;"><strong style="color:#1a1a1a;">Your privacy matters.</strong> Clothing Size Converter is built with privacy-first and security-by-design principles.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No data collection.</strong> We do not collect, store, or transmit any personal data. No accounts are required.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No tracking.</strong> Zero analytics, advertising, fingerprinting, or third-party SDKs. No network requests are made.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">Local only.</strong> All conversions run entirely on your device. Your preferences (theme, default countries) are stored in your browser's local storage and never leave your device.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No permissions.</strong> This app requires no special permissions — no location, camera, contacts, or notifications.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">Your rights (GDPR).</strong> Since no personal data is collected, there is nothing to access, export, or delete. You can clear local storage in your browser settings at any time to reset all preferences.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;"><strong style="color:#1a1a1a;">Open and transparent.</strong> The entire app is a single HTML file with no external dependencies. You can inspect every line of code.</p>
-          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">Last updated: April 2026</p>
+        <div class="fs-content" style="padding:20px;color:var(--text-primary);">
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:14px;"><strong style="color:var(--text-primary);">Your privacy matters.</strong> Clothing Size Converter is built with privacy-first and security-by-design principles.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">No data collection.</strong> We do not collect, store, or transmit any personal data. No accounts are required.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">No tracking.</strong> Zero analytics, advertising, fingerprinting, or third-party SDKs. No network requests are made.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">Local only.</strong> All conversions run entirely on your device. Your preferences (theme, default countries) are stored in your browser's local storage and never leave your device.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">No permissions.</strong> This app requires no special permissions — no location, camera, contacts, or notifications.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:6px;"><strong style="color:var(--text-primary);">Your rights (GDPR).</strong> Since no personal data is collected, there is nothing to access, export, or delete. You can clear local storage in your browser settings at any time to reset all preferences.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:14px;"><strong style="color:var(--text-primary);">Open and transparent.</strong> The entire app is a single HTML file with no external dependencies. You can inspect every line of code.</p>
+          <p style="font-size:13px;line-height:1.5;color:var(--text-dim);">Last updated: April 2026</p>
         </div>
       </div>
 
@@ -444,14 +460,14 @@
           <button class="fs-back-btn" onclick="closePage('coffeePage')">&#x2039;</button>
           <span class="fs-header-title">Support</span>
         </div>
-        <div class="fs-content" style="padding:24px 20px;color:#1a1a1a;text-align:center;">
+        <div class="fs-content" style="padding:24px 20px;color:var(--text-primary);text-align:center;">
           <div style="font-size:64px;margin-bottom:16px;">&#x2615;</div>
           <div style="font-size:22px;font-weight:600;margin-bottom:8px;">Buy Me a Coffee</div>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.5);margin-bottom:24px;">If you find this app useful, consider supporting its development. Every coffee helps keep it free, private, and ad-free.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-muted);margin-bottom:24px;">If you find this app useful, consider supporting its development. Every coffee helps keep it free, private, and ad-free.</p>
           <div style="background:rgba(0,0,0,0.06);border-radius:14px;padding:20px;margin-bottom:16px;">
-            <p style="font-size:14px;color:rgba(0,0,0,0.45);line-height:1.5;">Visit your favorite "Buy Me a Coffee" platform and search for the app developer. Thank you for your support!</p>
+            <p style="font-size:14px;color:var(--text-muted);line-height:1.5;">Visit your favorite "Buy Me a Coffee" platform and search for the app developer. Thank you for your support!</p>
           </div>
-          <p style="font-size:13px;color:rgba(0,0,0,0.3);line-height:1.5;">This app will always remain free to use with no ads or tracking.</p>
+          <p style="font-size:13px;color:var(--text-dim);line-height:1.5;">This app will always remain free to use with no ads or tracking.</p>
         </div>
       </div>
 
@@ -461,30 +477,30 @@
           <button class="fs-back-btn" onclick="closePage('howToUsePage')">&#x2039;</button>
           <span class="fs-header-title">How to Use</span>
         </div>
-        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
+        <div class="fs-content" style="padding:20px;color:var(--text-primary);">
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">1. Choose a Category</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Tap the category name at the top (e.g. "Dress") to pick what you want to convert &mdash; dresses, shoes, jeans, bras, and more.</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">Tap the category name at the top (e.g. "Dress") to pick what you want to convert &mdash; dresses, shoes, jeans, bras, and more.</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">2. Set Your Regions</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Tap a region code (e.g. "CA/US" or "UK") to change which country you're converting from or to. Tap the swap arrows to quickly flip them.</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">Tap a region code (e.g. "CA/US" or "UK") to change which country you're converting from or to. Tap the swap arrows to quickly flip them.</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">3. Enter Your Size</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Use the keypad to type your size number. The converted size appears automatically above. For shoes, use the decimal key for half sizes (e.g. 7.5).</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">Use the keypad to type your size number. The converted size appears automatically above. For shoes, use the decimal key for half sizes (e.g. 7.5).</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">4. Letter Sizes</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">For categories like Dress, Top, or Jacket, tap the "Size" button below the keypad to pick a letter size (S, M, L, XL, etc.) instead of typing a number.</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">For categories like Dress, Top, or Jacket, tap the "Size" button below the keypad to pick a letter size (S, M, L, XL, etc.) instead of typing a number.</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">5. Bra Sizes</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">For bras, enter the band size on the keypad and use the "Cup" button to select your cup size (A, B, C, etc.). The cup letter carries over to the converted size.</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">For bras, enter the band size on the keypad and use the "Cup" button to select your cup size (A, B, C, etc.). The cup letter carries over to the converted size.</p>
           </div>
           <div style="margin-bottom:20px;">
             <div style="font-size:17px;font-weight:600;margin-bottom:6px;">Tips</div>
-            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Long-press the backspace key to clear all input. Conversions are approximate &mdash; always check the brand's own size chart for the best fit.</p>
+            <p style="font-size:15px;line-height:1.5;color:var(--text-secondary);">Long-press the backspace key to clear all input. Conversions are approximate &mdash; always check the brand's own size chart for the best fit.</p>
           </div>
         </div>
       </div>
@@ -495,10 +511,23 @@
           <button class="fs-back-btn" onclick="closePage('termsPage')">&#x2039;</button>
           <span class="fs-header-title">Terms</span>
         </div>
-        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">Clothing Size Converter is provided as-is for informational purposes. Size conversions are approximate and may vary by brand and manufacturer.</p>
-          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">Always check the specific brand's size chart for the most accurate fit. We are not responsible for sizing discrepancies.</p>
-          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">Last updated: April 2026</p>
+        <div class="fs-content" style="padding:20px;color:var(--text-primary);">
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:14px;">Clothing Size Converter is provided as-is for informational purposes. Size conversions are approximate and may vary by brand and manufacturer.</p>
+          <p style="font-size:15px;line-height:1.6;color:var(--text-secondary);margin-bottom:14px;">Always check the specific brand's size chart for the most accurate fit. We are not responsible for sizing discrepancies.</p>
+          <p style="font-size:13px;line-height:1.5;color:var(--text-dim);">Last updated: April 2026</p>
+        </div>
+      </div>
+
+      <div class="copy-toast" id="copyToast">Copied!</div>
+
+      <!-- Size Chart -->
+      <div class="fullscreen-page" id="sizeChartPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('sizeChartPage')">&#x2039;</button>
+          <span class="fs-header-title" id="sizeChartTitle">Size Chart</span>
+        </div>
+        <div class="fs-content" style="padding:0;">
+          <div id="sizeChartContent" style="overflow:auto;padding:0 0 40px;"></div>
         </div>
       </div>
 
@@ -715,8 +744,8 @@ function openSizeOptionSheet() {
     title.textContent = 'Select Size';
     const letters = cat.hasLetter === 'w' ? W_LETTER : M_LETTER;
     list.innerHTML = Object.keys(letters).map(l =>
-      `<div class="picker-item" onclick="selectLetter('${l}')">
-        <span class="cup-label">${l}</span>
+      `<div class="picker-item ${l===currentLetter?'selected':''}" onclick="selectLetter('${l}')">
+        <span class="cup-label">${l}</span><span class="check">&#x2713;</span>
       </div>`
     ).join('');
   }
@@ -775,29 +804,42 @@ function updateDisplay() {
   const cat = getCat();
   const isBra = cat.hasCup;
 
+  // Helper to set result element
+  function setResult(el, text, cssClass) {
+    el.textContent = text;
+    el.classList.remove('hint', 'not-found');
+    if (cssClass) el.classList.add(cssClass);
+  }
+
   if (activeField === 'from') {
-    fromEl.textContent = isBra ? braDisplay(formatDisplay(inputStr || '0'), currentCup) : formatDisplay(inputStr || '0');
-    const fromCode = fromSystem, toCode = toSystem;
     if (inputStr === '0' || inputStr === '') {
-      toEl.textContent = '\u2014';
-    } else if (!isValidSize(inputStr, fromCode)) {
-      toEl.textContent = '\u2014';
+      setResult(fromEl, 'Enter size', 'hint');
+      setResult(toEl, '\u2014');
     } else {
-      const converted = convertSize(inputStr, fromCode, toCode);
-      toEl.textContent = isBra && converted !== '\u2014' ? converted + currentCup : converted;
+      setResult(fromEl, isBra ? braDisplay(formatDisplay(inputStr), currentCup) : formatDisplay(inputStr));
+      const fromCode = fromSystem, toCode = toSystem;
+      if (!isValidSize(inputStr, fromCode)) {
+        setResult(toEl, 'Size not available', 'not-found');
+      } else {
+        const converted = convertSize(inputStr, fromCode, toCode);
+        setResult(toEl, isBra && converted !== '\u2014' ? converted + currentCup : converted);
+      }
     }
     document.getElementById('fromRow').classList.add('active');
     document.getElementById('toRow').classList.remove('active');
   } else {
-    toEl.textContent = isBra ? braDisplay(formatDisplay(inputStr || '0'), currentCup) : formatDisplay(inputStr || '0');
-    const fromCode = toSystem, toCode = fromSystem;
     if (inputStr === '0' || inputStr === '') {
-      fromEl.textContent = '\u2014';
-    } else if (!isValidSize(inputStr, fromCode)) {
-      fromEl.textContent = '\u2014';
+      setResult(toEl, 'Enter size', 'hint');
+      setResult(fromEl, '\u2014');
     } else {
-      const converted = convertSize(inputStr, fromCode, toCode);
-      fromEl.textContent = isBra && converted !== '\u2014' ? converted + currentCup : converted;
+      setResult(toEl, isBra ? braDisplay(formatDisplay(inputStr), currentCup) : formatDisplay(inputStr));
+      const fromCode = toSystem, toCode = fromSystem;
+      if (!isValidSize(inputStr, fromCode)) {
+        setResult(fromEl, 'Size not available', 'not-found');
+      } else {
+        const converted = convertSize(inputStr, fromCode, toCode);
+        setResult(fromEl, isBra && converted !== '\u2014' ? converted + currentCup : converted);
+      }
     }
     document.getElementById('toRow').classList.add('active');
     document.getElementById('fromRow').classList.remove('active');
@@ -813,7 +855,8 @@ function updateDisplay() {
     else if (len > 8) el.classList.add('smaller');
   });
 
-  document.getElementById('categoryLabel').innerHTML = cat.name + ' <span class="cat-chevron">&#x25BC;</span>';
+  const genderPrefix = cat.group === 'women' ? "Women's " : "Men's ";
+  document.getElementById('categoryLabel').innerHTML = genderPrefix + cat.name + ' <span class="cat-chevron">&#x25BC;</span>';
 }
 
 function handleNumber(n) {
@@ -831,7 +874,7 @@ function handleNumber(n) {
 }
 function handleClear() { inputStr = '0'; updateDisplay(); }
 function handleBackspace() { inputStr = inputStr.length > 1 ? inputStr.slice(0,-1) : '0'; updateDisplay(); }
-function swapSystems() { [fromSystem, toSystem] = [toSystem, fromSystem]; inputStr = '0'; updateDisplay(); }
+function swapSystems() { [fromSystem, toSystem] = [toSystem, fromSystem]; updateDisplay(); }
 
 // ── Sheets (bottom) ──
 function openSheet(id) {
@@ -970,12 +1013,51 @@ function closeDefaultCountrySheet() {
   document.getElementById('defaultCountrySheet').classList.remove('visible');
 }
 
+// ── Copy Result ──
+function copyResult(el) {
+  const text = el.textContent;
+  if (!text || text === '\u2014' || text === 'Enter size' || text === 'Size not available') return;
+  try {
+    navigator.clipboard.writeText(text).then(() => showCopyToast()).catch(() => {});
+  } catch(e) {}
+}
+function showCopyToast() {
+  const toast = document.getElementById('copyToast');
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 1200);
+}
+
+// ── Size Chart ──
+function openSizeChart() {
+  const cat = getCat();
+  const genderPrefix = cat.group === 'women' ? "Women's " : "Men's ";
+  document.getElementById('sizeChartTitle').textContent = genderPrefix + cat.name + ' Chart';
+  const regions = Object.keys(cat.systems);
+  const len = cat.systems[regions[0]].length;
+  let html = '<table class="size-chart-table"><thead><tr>';
+  regions.forEach(r => { html += '<th>' + r + '</th>'; });
+  html += '</tr></thead><tbody>';
+  for (let i = 0; i < len; i++) {
+    html += '<tr>';
+    regions.forEach(r => {
+      const val = cat.systems[r][i];
+      const isFrom = r === fromSystem;
+      const isTo = r === toSystem;
+      html += '<td' + (isFrom || isTo ? ' class="highlight"' : '') + '>' + val + '</td>';
+    });
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  document.getElementById('sizeChartContent').innerHTML = html;
+  openPage('sizeChartPage');
+}
+
 // ── Onboarding ──
 const OB_STEPS = [
-  { title:'Choose a Category', desc:'Tap here to pick what clothing type you want to convert — dresses, shoes, jeans, and more.', top:68, left:56, arrowClass:'arrow-top' },
-  { title:'Enter Your Size', desc:'Use the keypad to type in your size number. The conversion appears automatically above.', top:420, left:56, arrowClass:'arrow-bottom' },
-  { title:'Switch Regions', desc:'Tap a region code to change which country you\'re converting from or to.', top:280, left:56, arrowClass:'arrow-top' },
-  { title:'Swap Direction', desc:'Tap the arrows to quickly swap your from and to sizing systems.', top:240, left:56, arrowClass:'arrow-top' },
+  { title:'Choose a Category', desc:'Tap here to pick what clothing type you want to convert — dresses, shoes, jeans, and more.', target:'categoryLabel', arrowClass:'arrow-top', offsetY:40 },
+  { title:'Enter Your Size', desc:'Use the keypad to type in your size number. The conversion appears automatically above.', target:'keypad', arrowClass:'arrow-bottom', offsetY:-200 },
+  { title:'Switch Regions', desc:'Tap a region code to change which country you\'re converting from or to.', target:'fromCode', arrowClass:'arrow-top', offsetY:40 },
+  { title:'Swap Direction', desc:'Tap the arrows to quickly swap your from and to sizing systems.', target:'fromRow', arrowClass:'arrow-top', offsetY:-60 },
 ];
 let obStep = 0;
 
@@ -988,9 +1070,15 @@ function showOnboarding() {
 function renderOnboardingStep() {
   const step = OB_STEPS[obStep];
   const bubble = document.getElementById('onboardingBubble');
+  const targetEl = document.getElementById(step.target);
+  const screen = document.querySelector('.screen');
+  const screenRect = screen.getBoundingClientRect();
+  const targetRect = targetEl.getBoundingClientRect();
+  const relTop = targetRect.top - screenRect.top + (step.offsetY || 0);
+  const relLeft = Math.max(16, Math.min(screenRect.width - 296, (targetRect.left - screenRect.left + targetRect.width / 2) - 140));
   bubble.style.display = 'block';
-  bubble.style.top = step.top + 'px';
-  bubble.style.left = step.left + 'px';
+  bubble.style.top = relTop + 'px';
+  bubble.style.left = relLeft + 'px';
   bubble.className = 'onboarding-bubble ' + step.arrowClass;
   document.getElementById('obStep').textContent = 'Step ' + (obStep + 1) + ' of ' + OB_STEPS.length;
   document.getElementById('obTitle').textContent = step.title;
