@@ -361,11 +361,11 @@
           <span class="fs-header-title">Menu</span>
         </div>
         <div class="menu-list">
-          <div class="menu-item" onclick="closePage('menuPage');openPage('settingsPage')"><div class="menu-icon">&#x2699;&#xFE0F;</div><span class="menu-label">Settings</span><span class="menu-arrow">&#x203A;</span></div>
-          <div class="menu-item" onclick="closePage('menuPage');openPage('aboutPage')"><div class="menu-icon">&#x2139;&#xFE0F;</div><span class="menu-label">About</span><span class="menu-arrow">&#x203A;</span></div>
-          <div class="menu-item" onclick="closePage('menuPage');openPage('privacyPage')"><div class="menu-icon">&#x1F512;</div><span class="menu-label">Privacy Policy</span><span class="menu-arrow">&#x203A;</span></div>
-          <div class="menu-item" onclick="closePage('menuPage');openPage('termsPage')"><div class="menu-icon">&#x1F4C4;</div><span class="menu-label">Terms of Use</span><span class="menu-arrow">&#x203A;</span></div>
-          <div class="menu-item" onclick="closePage('menuPage');openPage('coffeePage')"><div class="menu-icon">&#x2615;</div><span class="menu-label">Buy Me a Coffee</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="openPage('settingsPage')"><div class="menu-icon">&#x2699;&#xFE0F;</div><span class="menu-label">Settings</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="openPage('aboutPage')"><div class="menu-icon">&#x2139;&#xFE0F;</div><span class="menu-label">About</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="openPage('privacyPage')"><div class="menu-icon">&#x1F512;</div><span class="menu-label">Privacy Policy</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="openPage('termsPage')"><div class="menu-icon">&#x1F4C4;</div><span class="menu-label">Terms of Use</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="openPage('coffeePage')"><div class="menu-icon">&#x2615;</div><span class="menu-label">Buy Me a Coffee</span><span class="menu-arrow">&#x203A;</span></div>
         </div>
         <div class="menu-version">Clothing Size Converter v1.0.0</div>
       </div>
@@ -523,10 +523,10 @@ function renderColorGrid() {
 const W_STD = {'CA/US':[-4,-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26],'UK':[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],'EU':[28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58],'AU':[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],'IT':[32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62],'FR':[28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58],'DE':[26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56],'JP':[1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31],'CN':[150,155,160,165,170,175,180,185,190,195,200,205,210,215,220,225],'KR':[33,40,44,55,66,77,88,99,100,105,110,115,120,125,130,135]};
 const M_STD = {'CA/US':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'UK':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'EU':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'AU':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'IT':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'FR':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'DE':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'JP':[1,2,3,4,5,6,7,8,9,10,11,12,13,14],'CN':[155,160,165,170,175,180,185,190,195,200,205,210,215,220],'KR':[80,85,90,95,100,105,110,115,120,125,130,135,140,145]};
 const W_JEANS = {'CA/US':[22,23,24,25,26,27,28,29,30,31,32,33,34,36,38,40],'UK':[4,6,6,8,8,10,10,12,12,14,14,16,16,18,20,22],'EU':[30,32,32,34,34,36,36,38,38,40,40,42,42,46,48,50],'AU':[4,6,6,8,8,10,10,12,12,14,14,16,16,18,20,22],'IT':[34,36,36,38,38,40,40,42,42,44,44,46,46,50,52,54],'FR':[30,32,32,34,34,36,36,38,38,40,40,42,42,46,48,50],'DE':[28,30,30,32,32,34,34,36,36,38,38,40,40,44,46,48],'JP':[56,58,61,63,66,68,71,73,76,78,80,83,85,88,91,94],'CN':[155,158,160,163,165,168,170,173,175,178,180,183,185,190,195,200],'KR':[40,44,44,55,55,66,66,77,77,88,88,99,99,105,110,115]};
-const W_SHOES = {'CA/US':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10.5,11.5,12.5,13.5],'EU':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'AU':[2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11.5,12.5,13.5,14.5],'IT':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'FR':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'DE':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'JP':[20,20.5,21,21.5,22,22.5,23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,29,30,31,32],'CN':[210,215,220,225,228,230,233,235,238,240,243,245,248,255,260,265,270,280,290,300,310],'KR':[210,215,220,225,230,235,240,245,250,255,260,265,270,275,280,285,290,300,310,320,330]};
+const W_SHOES = {'CA/US':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,11,12,13,14],'EU':[35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,44,45,46,47],'AU':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'IT':[35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,44,45,46,47],'FR':[35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,44,45,46,47],'DE':[35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,44,45,46,47],'JP':[21,21.5,22,22.5,23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,28.5,29,30,31,32,33],'CN':[35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,44,45,46,47],'KR':[210,215,220,225,230,235,240,245,250,255,260,265,270,275,280,285,290,300,310,320,330]};
 const W_BRA = {'CA/US':[28,30,32,34,36,38,40,42,44,46,48,50],'UK':[28,30,32,34,36,38,40,42,44,46,48,50],'EU':[60,65,70,75,80,85,90,95,100,105,110,115],'AU':[6,8,10,12,14,16,18,20,22,24,26,28],'IT':[0,1,2,3,4,5,6,7,8,9,10,11],'FR':[75,80,85,90,95,100,105,110,115,120,125,130],'DE':[60,65,70,75,80,85,90,95,100,105,110,115],'JP':[60,65,70,75,80,85,90,95,100,105,110,115],'CN':[60,65,70,75,80,85,90,95,100,105,110,115],'KR':[60,65,70,75,80,85,90,95,100,105,110,115]};
 const M_JEANS = {'CA/US':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'UK':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'EU':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'AU':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'IT':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'FR':[36,37,38,39,40,41,42,43,44,46,48,50,52,54,56],'DE':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'JP':[66,68,71,73,76,78,80,83,85,90,95,100,105,110,115],'CN':[165,168,170,173,175,178,180,183,185,190,195,200,205,210,215],'KR':[66,68,71,73,76,78,80,83,85,90,95,100,105,110,115]};
-const M_SHOES = {'CA/US':[5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'EU':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'AU':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'IT':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'FR':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'DE':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'JP':[23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,28.5,29,29.5,30,31,32,33,34],'CN':[235,238,240,243,250,253,255,258,260,263,265,268,270,273,280,290,300,310,320],'KR':[235,238,240,243,250,253,255,258,260,263,265,268,270,273,280,290,300,310,320]};
+const M_SHOES = {'CA/US':[5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'EU':[37.5,38,38.5,39,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'AU':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'IT':[37.5,38,38.5,39,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'FR':[37.5,38,38.5,39,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'DE':[37.5,38,38.5,39,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'JP':[23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,28.5,29,29.5,30,31,32,33,34],'CN':[38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'KR':[230,235,240,245,250,255,260,265,270,275,280,285,290,295,300,310,320,330,340]};
 const M_SHIRT = {'CA/US':[13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,20],'UK':[13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,20],'EU':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'AU':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'IT':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'FR':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'DE':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'JP':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'CN':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'KR':[33,34,36,37,38,39,41,42,43,44,45,46,48,50]};
 
 // Cup sizes — same letter maps across all regions for bra
@@ -587,6 +587,7 @@ let inputStr = '0';
 let activeField = 'from';
 let pickerTarget = null;
 let currentCup = 'A';
+let currentLetter = null;
 let defaultPickerTarget = null;
 
 // Validate helpers
@@ -655,7 +656,8 @@ function updateSizeOptionBar() {
   } else if (cat.hasLetter) {
     row.style.display = '';
     bar.style.display = 'flex';
-    bar.innerHTML = `<button class="size-dropdown-pill" onclick="openSizeOptionSheet()">Size <span class="pill-chevron">▼</span></button>`;
+    const label = currentLetter ? 'Size: ' + currentLetter : 'Size';
+    bar.innerHTML = `<button class="size-dropdown-pill" onclick="openSizeOptionSheet()">${label} <span class="pill-chevron">▼</span></button>`;
   } else {
     row.style.display = 'none';
     bar.style.display = 'none';
@@ -701,11 +703,13 @@ function selectLetter(letter) {
   const map = cat.hasLetter === 'w' ? W_LETTER : M_LETTER;
   const idx = map[letter];
   if (idx === undefined) return;
+  currentLetter = letter;
   closeAllSheets();
   const fromCode = activeField === 'from' ? fromSystem : toSystem;
   const sizes = cat.systems[fromCode];
   if (sizes && idx < sizes.length) {
     inputStr = String(sizes[idx]);
+    updateSizeOptionBar();
     updateDisplay();
   }
 }
@@ -858,6 +862,7 @@ function filterCategories() {
 function selectCategory(id) {
   currentCategory = id;
   inputStr = '0';
+  currentLetter = null;
   closeAllSheets();
   updateSizeOptionBar();
   updateKeypad();
@@ -881,7 +886,7 @@ function clearAllData() {
     localStorage.removeItem('sc_to');
     localStorage.removeItem('sc_onboarded');
   } catch(e) {}
-  fromSystem = 'CA/US'; toSystem = 'UK'; currentThemeIdx = 0; currentCategory = 'w_dress'; inputStr = '0'; currentCup = 'A';
+  fromSystem = 'CA/US'; toSystem = 'UK'; currentThemeIdx = 0; currentCategory = 'w_dress'; inputStr = '0'; currentCup = 'A'; currentLetter = null;
   applyTheme(0);
   document.getElementById('settingFrom').innerHTML = 'CA/US <span class="setting-chevron">&#x203A;</span>';
   document.getElementById('settingTo').innerHTML = 'UK <span class="setting-chevron">&#x203A;</span>';
