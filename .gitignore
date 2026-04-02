@@ -1,0 +1,12 @@
+.DS_Store
+.claude/
+*.swp
+*.swo
+*~
+Projects/
+DerivedData/
+*.xcuserdata
+xcuserdata/
+build/
+currency-converter/serve.*
+currency-converter/ClothingSizeConverter.html

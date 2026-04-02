@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="no-referrer">
+<title>Clothing Size Converter</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
+  html, body { height:100%; overflow:hidden; }
+  body {
+    background: var(--bg-outer);
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    display:flex; justify-content:center; align-items:center;
+  }
+  :root {
+    --accent: #b8e4f0; --accent-dark: #4a7a85;
+    --bg-outer: #8ecad6; --picker-bg: #e8f4f8;
+    /* Semantic colors — light mode defaults */
+    --text-primary: #1a1a1a;
+    --text-secondary: rgba(0,0,0,0.6);
+    --text-muted: rgba(0,0,0,0.4);
+    --text-faint: rgba(0,0,0,0.25);
+    --text-dim: rgba(0,0,0,0.35);
+    --bg-key: rgba(255,255,255,0.55);
+    --bg-key-active: rgba(255,255,255,0.8);
+    --bg-key-fn: rgba(255,255,255,0.75);
+    --bg-key-fn-active: rgba(255,255,255,0.95);
+    --bg-subtle: rgba(0,0,0,0.06);
+    --bg-overlay: rgba(0,0,0,0.25);
+    --border-light: rgba(0,0,0,0.08);
+    --border-mid: rgba(0,0,0,0.1);
+    --border-divider: rgba(0,0,0,0.15);
+    --frame-bg: #e0e0e0;
+    --frame-border: #ccc;
+    --frame-outer: #bbb;
+    --icon-fill: #2a2a2a;
+    --sheet-close-bg: rgba(0,0,0,0.1);
+    --btn-bg: rgba(0,0,0,0.12);
+    --home-bar-opacity: 0.2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-primary: #f0f0f0;
+      --text-secondary: rgba(255,255,255,0.65);
+      --text-muted: rgba(255,255,255,0.45);
+      --text-faint: rgba(255,255,255,0.25);
+      --text-dim: rgba(255,255,255,0.35);
+      --bg-key: rgba(255,255,255,0.12);
+      --bg-key-active: rgba(255,255,255,0.22);
+      --bg-key-fn: rgba(255,255,255,0.18);
+      --bg-key-fn-active: rgba(255,255,255,0.3);
+      --bg-subtle: rgba(255,255,255,0.08);
+      --bg-overlay: rgba(0,0,0,0.5);
+      --border-light: rgba(255,255,255,0.08);
+      --border-mid: rgba(255,255,255,0.1);
+      --border-divider: rgba(255,255,255,0.12);
+      --frame-bg: #1a1a1a;
+      --frame-border: #333;
+      --frame-outer: #222;
+      --icon-fill: #e0e0e0;
+      --sheet-close-bg: rgba(255,255,255,0.12);
+      --btn-bg: rgba(255,255,255,0.15);
+      --home-bar-opacity: 0.35;
+    }
+  }
+
+  .iphone-frame {
+    width:393px; height:852px;
+    transform: scale(var(--phone-scale, 0.75));
+    transform-origin: center center;
+    position:relative; border-radius:55px; background:#e0e0e0;
+    box-shadow: 0 0 0 2px #ccc, 0 0 0 4px #e0e0e0, 0 0 0 6px #bbb,
+      0 30px 80px rgba(0,0,0,0.25), 0 10px 30px rgba(0,0,0,0.15),
+      inset 0 0 2px rgba(255,255,255,0.3);
+    overflow:hidden;
+  }
+  .dynamic-island { position:absolute; top:12px; left:50%; transform:translateX(-50%); width:126px; height:37px; background:#1a1a1a; border-radius:20px; z-index:20; }
+  .screen { position:absolute; top:4px; left:4px; right:4px; bottom:4px; border-radius:51px; overflow:hidden; background:var(--accent); }
+  .iphone-frame::before { content:''; position:absolute; right:-3px; top:172px; width:4px; height:80px; background:#bbb; border-radius:0 2px 2px 0; }
+  .iphone-frame::after { content:''; position:absolute; left:-3px; top:145px; width:4px; height:36px; background:#bbb; border-radius:2px 0 0 2px; box-shadow:0 52px 0 #bbb, 0 92px 0 #bbb; }
+
+  .calculator { width:100%; height:100%; background:var(--accent); display:flex; flex-direction:column; position:relative; overflow:hidden; }
+
+  .status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; height:58px; flex-shrink:0; }
+  .status-time { font-size:16px; font-weight:600; color:#2a2a2a; }
+  .status-icons { display:flex; align-items:center; gap:6px; }
+  .status-icons svg { fill:#2a2a2a; }
+
+  .category-bar { display:flex; justify-content:center; align-items:center; padding:6px 20px 2px; flex-shrink:0; }
+  .category-label { background:none; border:none; color:#1a1a1a; font-size:18px; font-weight:600; cursor:pointer; padding:6px 14px; border-radius:20px; display:flex; align-items:center; gap:5px; }
+  .category-label:active { opacity:0.5; }
+  .category-label .cat-chevron { font-size:10px; opacity:0.5; }
+
+  .top-bar { display:flex; justify-content:space-between; align-items:center; padding:4px 20px; flex-shrink:0; }
+  .top-btn { width:40px; height:40px; border-radius:50%; background:rgba(0,0,0,0.12); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .top-btn svg { fill:#2a2a2a; }
+  .top-spacer { width:40px; }
+
+  .display-area { flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:0 24px 16px; }
+  .currency-row { display:flex; align-items:baseline; justify-content:flex-end; gap:8px; }
+  .currency-row.from { margin-bottom:4px; }
+  .currency-value { font-size:70px; font-weight:300; color:#1a1a1a; letter-spacing:-1px; line-height:1.1; transition:font-size 0.15s ease; cursor:pointer; }
+  .currency-value.smaller { font-size:50px; }
+  .currency-value.smallest { font-size:38px; }
+  .currency-code { font-size:22px; font-weight:400; color:var(--accent-dark); display:flex; align-items:center; gap:3px; flex-shrink:0; cursor:pointer; }
+  .currency-code .chevron { font-size:12px; opacity:0.6; }
+  .currency-row.active .currency-code { color:#2a2a2a; }
+
+  .swap-divider { display:flex; align-items:center; padding:10px 0; gap:12px; }
+  .swap-btn { background:none; border:none; cursor:pointer; padding:4px; display:flex; align-items:center; justify-content:center; }
+  .swap-btn svg { fill:#2a2a2a; }
+  .divider-line { flex:1; height:0.5px; background:rgba(0,0,0,0.15); }
+
+  .keypad { padding:0 12px 8px; display:flex; flex-direction:column; gap:12px; flex-shrink:0; }
+  .key-row { display:flex; gap:12px; justify-content:center; }
+  .key { width:80px; height:80px; border-radius:50%; border:none; font-size:32px; font-weight:400; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.1s; -webkit-font-smoothing:antialiased; }
+  .key:active { opacity:0.6; }
+  .key-number { background:rgba(255,255,255,0.55); color:#1a1a1a; }
+  .key-number:active { background:rgba(255,255,255,0.8); opacity:1; }
+  .key-function { background:rgba(255,255,255,0.75); color:#1a1a1a; font-size:28px; }
+  .key-function:active { background:rgba(255,255,255,0.95); opacity:1; }
+  .key svg { width:28px; height:28px; }
+  .key-function svg { fill:#1a1a1a; }
+
+  .home-indicator { flex-shrink:0; display:flex; justify-content:center; padding:8px 0 10px; }
+  .home-indicator-bar { width:134px; height:5px; background:#1a1a1a; border-radius:3px; opacity:0.2; }
+
+  /* Modal overlay */
+  .modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.25); display:none; z-index:10; }
+  .modal-overlay.visible { display:block; }
+
+  /* Shared bottom sheet */
+  .sheet { position:absolute; bottom:0; left:0; right:0; background:var(--picker-bg); border-radius:14px 14px 0 0; max-height:70%; display:flex; flex-direction:column; z-index:11; transform:translateY(100%); transition:transform 0.3s ease; }
+  .sheet.visible { transform:translateY(0); }
+  .sheet-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:0.5px solid rgba(0,0,0,0.1); }
+  .sheet-header span { color:#1a1a1a; font-size:17px; font-weight:600; }
+  .sheet-close { background:rgba(0,0,0,0.1); border:none; color:#1a1a1a; width:30px; height:30px; border-radius:50%; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .sheet-list { overflow-y:auto; flex:1; -webkit-overflow-scrolling:touch; }
+
+  .picker-item { display:flex; align-items:center; padding:14px 20px; cursor:pointer; gap:14px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
+  .picker-item:active { background:rgba(0,0,0,0.05); }
+  .picker-item .flag { font-size:28px; }
+  .picker-item .info { flex:1; }
+  .picker-item .info .code { color:#1a1a1a; font-size:17px; font-weight:500; }
+  .picker-item .info .name { color:var(--accent-dark); font-size:13px; }
+  .picker-item .check { color:#2a2a2a; font-size:20px; font-weight:600; display:none; }
+  .picker-item.selected .check { display:block; }
+
+  .cat-item { display:flex; align-items:center; padding:15px 20px; cursor:pointer; gap:14px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
+  .cat-item:active { background:rgba(0,0,0,0.05); }
+  .cat-item .cat-icon { font-size:24px; }
+  .cat-item .cat-name { flex:1; color:#1a1a1a; font-size:17px; font-weight:500; }
+  .cat-item .check { color:#2a2a2a; font-size:20px; font-weight:600; display:none; }
+  .cat-item.selected .check { display:block; }
+
+  .section-title { color:rgba(0,0,0,0.45); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; padding:20px 20px 8px; }
+  .cat-group-header { color:#1a1a1a; font-size:20px; font-weight:700; padding:20px 20px 10px; border-bottom:1.5px solid rgba(0,0,0,0.08); }
+
+  /* Search bar */
+  .search-bar { padding:12px 16px 8px; }
+  .search-input { width:100%; padding:10px 14px; border-radius:10px; border:none; background:rgba(0,0,0,0.06); font-size:16px; color:#1a1a1a; outline:none; font-family:inherit; }
+  .search-input::placeholder { color:rgba(0,0,0,0.3); }
+  .search-no-results { padding:20px; text-align:center; color:rgba(0,0,0,0.35); font-size:15px; }
+
+  /* Full screen pages (menu, settings, about, privacy, terms, feedback) */
+  .fullscreen-page { position:absolute; inset:0; background:var(--accent); z-index:30; display:none; flex-direction:column; }
+  .fullscreen-page.visible { display:flex; }
+  .fs-header { display:flex; align-items:center; padding:60px 24px 16px; gap:12px; }
+  .fs-back-btn { width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,0.1); border:none; color:#1a1a1a; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .fs-back-btn:active { opacity:0.5; }
+  .fs-header-title { font-size:28px; font-weight:700; color:#1a1a1a; flex:1; }
+  .fs-content { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:0 0 40px; }
+
+  .menu-list { flex:1; overflow-y:auto; padding:0 0 40px; }
+  .menu-item { display:flex; align-items:center; padding:16px 24px; cursor:pointer; gap:16px; border-bottom:0.5px solid rgba(0,0,0,0.08); }
+  .menu-item:active { background:rgba(0,0,0,0.05); }
+  .menu-item .menu-icon { width:36px; height:36px; border-radius:10px; background:rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .menu-item .menu-label { flex:1; color:#1a1a1a; font-size:17px; font-weight:400; }
+  .menu-item .menu-arrow { color:rgba(0,0,0,0.25); font-size:18px; }
+  .menu-version { text-align:center; padding:20px; color:rgba(0,0,0,0.25); font-size:13px; }
+
+  /* Color grid */
+  .color-grid { display:flex; flex-wrap:wrap; gap:12px; padding:20px; justify-content:center; }
+  .color-swatch { width:52px; height:52px; border-radius:50%; border:3px solid transparent; cursor:pointer; transition:border-color 0.15s, transform 0.15s; position:relative; }
+  .color-swatch:active { transform:scale(0.9); }
+  .color-swatch.active { border-color:#1a1a1a; }
+  .color-swatch.active::after { content:'\2713'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,0.4); }
+  .settings-info { color:rgba(0,0,0,0.4); font-size:13px; padding:8px 20px 0; line-height:1.4; }
+
+  /* Size option dropdown pill */
+  .size-dropdown-pill {
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    width:264px; height:48px; border-radius:24px; border:none;
+    background:rgba(255,255,255,0.55); color:#1a1a1a; font-size:15px; font-weight:600;
+    cursor:pointer; font-family:inherit; transition:opacity 0.1s;
+  }
+  .size-dropdown-pill:active { background:rgba(255,255,255,0.8); }
+  .size-dropdown-pill .pill-chevron { font-size:10px; opacity:0.45; }
+  #sizeOptionRow { justify-content:center; }
+
+  /* Feedback form */
+  .feedback-form { padding:0 24px; }
+  .feedback-textarea {
+    width:100%; min-height:160px; padding:14px 16px; border-radius:12px; border:none;
+    background:rgba(0,0,0,0.06); color:#1a1a1a; font-size:16px; font-family:inherit;
+    outline:none; resize:none; -webkit-overflow-scrolling:touch;
+  }
+  .feedback-textarea::placeholder { color:rgba(0,0,0,0.3); }
+  .feedback-send-btn {
+    width:calc(100% - 48px); margin:16px 24px; padding:16px; border-radius:14px; border:none;
+    background:rgba(0,0,0,0.12); color:#1a1a1a; font-size:17px; font-weight:600;
+    cursor:pointer; font-family:inherit; transition:opacity 0.15s;
+  }
+  .feedback-send-btn:active { opacity:0.6; }
+  .feedback-sent-msg { text-align:center; padding:40px 24px; color:rgba(0,0,0,0.5); font-size:15px; display:none; }
+  .feedback-sent-msg.visible { display:block; }
+
+  /* Onboarding tooltip */
+  .onboarding-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); z-index:40; display:none; }
+  .onboarding-overlay.visible { display:block; }
+  .onboarding-bubble {
+    position:absolute; z-index:41; background:#fff; border-radius:16px; padding:18px 20px;
+    width:280px; box-shadow:0 8px 30px rgba(0,0,0,0.25);
+  }
+  .onboarding-bubble::after {
+    content:''; position:absolute; width:16px; height:16px; background:#fff;
+    transform:rotate(45deg);
+  }
+  .onboarding-bubble.arrow-top::after { top:-7px; left:50%; margin-left:-8px; }
+  .onboarding-bubble.arrow-bottom::after { bottom:-7px; left:50%; margin-left:-8px; }
+  .onboarding-bubble.arrow-right::after { right:-7px; top:50%; margin-top:-8px; }
+  .ob-step { color:rgba(0,0,0,0.35); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+  .ob-title { color:#1a1a1a; font-size:16px; font-weight:700; margin-bottom:4px; }
+  .ob-desc { color:rgba(0,0,0,0.55); font-size:14px; line-height:1.4; margin-bottom:14px; }
+  .ob-actions { display:flex; justify-content:space-between; align-items:center; }
+  .ob-skip { color:rgba(0,0,0,0.35); font-size:14px; cursor:pointer; }
+  .ob-skip:active { opacity:0.5; }
+  .ob-next {
+    padding:8px 20px; border-radius:10px; border:none;
+    background:linear-gradient(135deg, #2a7de1, #4a9eff); color:#fff;
+    font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;
+  }
+  .ob-next:active { opacity:0.8; }
+  .ob-dots { display:flex; gap:6px; }
+  .ob-dot { width:6px; height:6px; border-radius:50%; background:rgba(0,0,0,0.15); }
+  .ob-dot.active { background:#2a7de1; }
+
+  /* Settings default country picker */
+  .setting-row { display:flex; align-items:center; padding:14px 20px; border-bottom:0.5px solid rgba(0,0,0,0.08); cursor:pointer; gap:12px; }
+  .setting-row:active { background:rgba(0,0,0,0.03); }
+  .setting-label { flex:1; color:#1a1a1a; font-size:16px; }
+  .setting-value { color:rgba(0,0,0,0.4); font-size:16px; display:flex; align-items:center; gap:4px; }
+  .setting-chevron { font-size:12px; opacity:0.4; }
+</style>
+</head>
+<body>
+<div class="iphone-frame">
+  <div class="dynamic-island"></div>
+  <div class="screen">
+    <div class="calculator">
+      <div class="status-bar" id="mainStatusBar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="1" width="3" height="11" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.4L14 4C12.4 2.5 10.3 1.6 8 1.6S3.6 2.5 2 4L3.4 5.4C4.6 4.3 6.2 3.6 8 3.6ZM8 7.2C9 7.2 9.9 7.6 10.6 8.2L12 6.8C10.9 5.8 9.5 5.2 8 5.2S5.1 5.8 4 6.8L5.4 8.2C6.1 7.6 7 7.2 8 7.2ZM9.4 10.4L8 12L6.6 10.4C7 9.9 7.5 9.6 8 9.6S9 9.9 9.4 10.4Z"/></svg>
+          <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0" y="1" width="22" height="11" rx="2" stroke="#2a2a2a" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="5" rx="0.5" fill="#2a2a2a" opacity="0.35"/><rect x="1.5" y="2.5" width="19" height="8" rx="1" fill="#2a2a2a"/></svg>
+        </div>
+      </div>
+
+      <div class="category-bar">
+        <button class="category-label" onclick="openCategoryPicker()" id="categoryLabel">
+          Dress <span class="cat-chevron">&#x25BC;</span>
+        </button>
+      </div>
+
+      <div class="top-bar">
+        <div class="top-spacer"></div>
+        <button class="top-btn" aria-label="Menu" onclick="openPage('menuPage')">
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="#2a2a2a" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+        </button>
+      </div>
+
+      <div class="display-area">
+        <div class="currency-row to" id="toRow">
+          <span class="currency-value" id="toValue" onclick="openPicker('to')">12</span>
+          <span class="currency-code" id="toCode" onclick="openPicker('to')">UK <span class="chevron">&#x25C7;</span></span>
+        </div>
+        <div class="swap-divider">
+          <button class="swap-btn" onclick="swapSystems()" aria-label="Swap">
+            <svg width="22" height="22" viewBox="0 0 22 22"><path d="M7 2L7 18M7 2L3 6M7 2L11 6M15 20L15 4M15 20L11 16M15 20L19 16" stroke="#2a2a2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </button>
+          <div class="divider-line"></div>
+        </div>
+        <div class="currency-row from active" id="fromRow">
+          <span class="currency-value" id="fromValue" onclick="openPicker('from')">8</span>
+          <span class="currency-code" id="fromCode" onclick="openPicker('from')">CA/US <span class="chevron">&#x25C7;</span></span>
+        </div>
+      </div>
+
+      <div class="keypad" id="keypad">
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('7')">7</button>
+          <button class="key key-number" onclick="handleNumber('8')">8</button>
+          <button class="key key-number" onclick="handleNumber('9')">9</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('4')">4</button>
+          <button class="key key-number" onclick="handleNumber('5')">5</button>
+          <button class="key key-number" onclick="handleNumber('6')">6</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('1')">1</button>
+          <button class="key key-number" onclick="handleNumber('2')">2</button>
+          <button class="key key-number" onclick="handleNumber('3')">3</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-function" id="bottomLeftKey" onclick="handleClear()">C</button>
+          <button class="key key-number" onclick="handleNumber('0')">0</button>
+          <button class="key key-function" id="backspaceKey" onclick="handleBackspace()">
+            <svg viewBox="0 0 28 28" width="28" height="28"><path d="M10.7 5L2 14l8.7 9H26V5H10.7z" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linejoin="round"/><line x1="14.5" y1="10" x2="21.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/><line x1="21.5" y1="10" x2="14.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="key-row" id="sizeOptionRow" style="display:none;">
+          <div id="sizeOptionBar"></div>
+        </div>
+      </div>
+
+      <div class="home-indicator"><div class="home-indicator-bar"></div></div>
+
+      <!-- Overlay -->
+      <div class="modal-overlay" id="modalOverlay" onclick="closeAllSheets()"></div>
+
+      <!-- Size System Picker (bottom sheet) -->
+      <div class="sheet" id="systemSheet">
+        <div class="sheet-header"><span>Select Size System</span><button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button></div>
+        <div class="sheet-list" id="systemList"></div>
+      </div>
+
+      <!-- Category Picker (bottom sheet) -->
+      <div class="sheet" id="categorySheet">
+        <div class="sheet-header"><span>Clothing Category</span><button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button></div>
+        <div class="search-bar"><input class="search-input" id="catSearch" type="text" placeholder="Search categories..." oninput="filterCategories()"></div>
+        <div class="sheet-list" id="categoryList"></div>
+      </div>
+
+      <!-- Size Option Picker (bottom sheet) -->
+      <div class="sheet" id="sizeOptionSheet">
+        <div class="sheet-header"><span id="sizeOptionSheetTitle">Select Option</span><button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button></div>
+        <div class="sheet-list" id="sizeOptionList"></div>
+      </div>
+
+      <!-- ═══ Full-Screen Pages ═══ -->
+
+      <!-- Menu -->
+      <div class="fullscreen-page" id="menuPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('menuPage')">&#x2039;</button>
+          <span class="fs-header-title">Menu</span>
+        </div>
+        <div class="menu-list">
+          <div class="menu-item" onclick="closePage('menuPage');openPage('settingsPage')"><div class="menu-icon">&#x2699;&#xFE0F;</div><span class="menu-label">Settings</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="closePage('menuPage');openPage('aboutPage')"><div class="menu-icon">&#x2139;&#xFE0F;</div><span class="menu-label">About</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="closePage('menuPage');openPage('privacyPage')"><div class="menu-icon">&#x1F512;</div><span class="menu-label">Privacy Policy</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="closePage('menuPage');openPage('termsPage')"><div class="menu-icon">&#x1F4C4;</div><span class="menu-label">Terms of Use</span><span class="menu-arrow">&#x203A;</span></div>
+          <div class="menu-item" onclick="closePage('menuPage');openPage('coffeePage')"><div class="menu-icon">&#x2615;</div><span class="menu-label">Buy Me a Coffee</span><span class="menu-arrow">&#x203A;</span></div>
+        </div>
+        <div class="menu-version">Clothing Size Converter v1.0.0</div>
+      </div>
+
+      <!-- Settings -->
+      <div class="fullscreen-page" id="settingsPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('settingsPage')">&#x2039;</button>
+          <span class="fs-header-title">Settings</span>
+        </div>
+        <div class="fs-content">
+          <div class="section-title">Defaults</div>
+          <div class="setting-row" onclick="openDefaultFromPicker()">
+            <span class="setting-label">Convert From</span>
+            <span class="setting-value" id="settingFrom">CA/US <span class="setting-chevron">&#x203A;</span></span>
+          </div>
+          <div class="setting-row" onclick="openDefaultToPicker()">
+            <span class="setting-label">Convert To</span>
+            <span class="setting-value" id="settingTo">UK <span class="setting-chevron">&#x203A;</span></span>
+          </div>
+          <div class="section-title">App Color</div>
+          <div class="color-grid" id="colorGrid"></div>
+          <div class="settings-info">Choose a color theme for the app. This changes the background and accent colors throughout.</div>
+          <div class="section-title">Data</div>
+          <div class="setting-row" onclick="clearAllData()">
+            <span class="setting-label" style="color:#e53e3e;">Clear All Data</span>
+          </div>
+          <div class="settings-info">Removes all locally stored preferences (theme, default countries, onboarding state). No personal data is ever stored.</div>
+        </div>
+      </div>
+
+      <!-- Default Country Picker (bottom sheet, higher z) -->
+      <div class="sheet" id="defaultCountrySheet" style="z-index:35;">
+        <div class="sheet-header"><span id="defaultCountryTitle">Convert From</span><button class="sheet-close" onclick="closeDefaultCountrySheet()">&#x2715;</button></div>
+        <div class="sheet-list" id="defaultCountryList"></div>
+      </div>
+
+      <!-- About -->
+      <div class="fullscreen-page" id="aboutPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('aboutPage')">&#x2039;</button>
+          <span class="fs-header-title">About</span>
+        </div>
+        <div class="fs-content" style="padding:24px 20px;color:#1a1a1a;">
+          <div style="text-align:center;margin-bottom:20px;">
+            <div style="font-size:48px;margin-bottom:8px;">&#x1F457;</div>
+            <div style="font-size:22px;font-weight:600;">Clothing Size Converter</div>
+            <div style="font-size:14px;color:rgba(0,0,0,0.4);margin-top:4px;">Version 1.0.0</div>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);text-align:center;">Instantly convert clothing sizes between international sizing systems. Supports Women's &amp; Men's categories across 10 regional standards.</p>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div class="fullscreen-page" id="privacyPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('privacyPage')">&#x2039;</button>
+          <span class="fs-header-title">Privacy</span>
+        </div>
+        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;"><strong style="color:#1a1a1a;">Your privacy matters.</strong> Clothing Size Converter is built with privacy-first and security-by-design principles.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No data collection.</strong> We do not collect, store, or transmit any personal data. No accounts are required.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No tracking.</strong> Zero analytics, advertising, fingerprinting, or third-party SDKs. No network requests are made.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">Local only.</strong> All conversions run entirely on your device. Your preferences (theme, default countries) are stored in your browser's local storage and never leave your device.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">No permissions.</strong> This app requires no special permissions — no location, camera, contacts, or notifications.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:6px;"><strong style="color:#1a1a1a;">Your rights (GDPR).</strong> Since no personal data is collected, there is nothing to access, export, or delete. You can clear local storage in your browser settings at any time to reset all preferences.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;"><strong style="color:#1a1a1a;">Open and transparent.</strong> The entire app is a single HTML file with no external dependencies. You can inspect every line of code.</p>
+          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">Last updated: April 2026</p>
+        </div>
+      </div>
+
+      <!-- Buy Me a Coffee -->
+      <div class="fullscreen-page" id="coffeePage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('coffeePage')">&#x2039;</button>
+          <span class="fs-header-title">Support</span>
+        </div>
+        <div class="fs-content" style="padding:24px 20px;color:#1a1a1a;text-align:center;">
+          <div style="font-size:64px;margin-bottom:16px;">&#x2615;</div>
+          <div style="font-size:22px;font-weight:600;margin-bottom:8px;">Buy Me a Coffee</div>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.5);margin-bottom:24px;">If you find this app useful, consider supporting its development. Every coffee helps keep it free, private, and ad-free.</p>
+          <div style="background:rgba(0,0,0,0.06);border-radius:14px;padding:20px;margin-bottom:16px;">
+            <p style="font-size:14px;color:rgba(0,0,0,0.45);line-height:1.5;">Visit your favorite "Buy Me a Coffee" platform and search for the app developer. Thank you for your support!</p>
+          </div>
+          <p style="font-size:13px;color:rgba(0,0,0,0.3);line-height:1.5;">This app will always remain free to use with no ads or tracking.</p>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="fullscreen-page" id="termsPage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('termsPage')">&#x2039;</button>
+          <span class="fs-header-title">Terms</span>
+        </div>
+        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">Clothing Size Converter is provided as-is for informational purposes. Size conversions are approximate and may vary by brand and manufacturer.</p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">Always check the specific brand's size chart for the most accurate fit. We are not responsible for sizing discrepancies.</p>
+          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">Last updated: April 2026</p>
+        </div>
+      </div>
+
+      <!-- Onboarding -->
+      <div class="onboarding-overlay" id="onboardingOverlay" onclick="nextOnboardingStep()"></div>
+      <div class="onboarding-bubble arrow-top" id="onboardingBubble" style="display:none;">
+        <div class="ob-step" id="obStep"></div>
+        <div class="ob-title" id="obTitle"></div>
+        <div class="ob-desc" id="obDesc"></div>
+        <div class="ob-actions">
+          <span class="ob-skip" onclick="dismissOnboarding()">Skip</span>
+          <div class="ob-dots" id="obDots"></div>
+          <button class="ob-next" onclick="nextOnboardingStep()" id="obNextBtn">Next</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Color Themes ──
+const COLOR_THEMES = [
+  { name:'Blue',     accent:'#b8e4f0', dark:'#4a7a85', outer:'#8ecad6', picker:'#e8f4f8' },
+  { name:'Rose',     accent:'#f0c4ca', dark:'#8a5060', outer:'#d6a0aa', picker:'#f8e4e8' },
+  { name:'Sage',     accent:'#c4dcc4', dark:'#5a7a5a', outer:'#a0c4a0', picker:'#e4f0e4' },
+  { name:'Lavender', accent:'#d4c4e8', dark:'#6a5a80', outer:'#b8a0d0', picker:'#ece4f4' },
+  { name:'Peach',    accent:'#f0d8c4', dark:'#8a6a50', outer:'#d6b8a0', picker:'#f8ece4' },
+  { name:'Sand',     accent:'#e8dcc8', dark:'#7a7060', outer:'#d0c4a8', picker:'#f4efe4' },
+  { name:'Sky',      accent:'#c4d8f0', dark:'#506a8a', outer:'#a0bcd6', picker:'#e4ecf8' },
+  { name:'Coral',    accent:'#f0c8b8', dark:'#8a5a4a', outer:'#d6a890', picker:'#f8e8e0' },
+  { name:'Mint',     accent:'#b8f0e0', dark:'#4a8a72', outer:'#8ed6c0', picker:'#e0f8f0' },
+  { name:'Slate',    accent:'#ccd0d8', dark:'#5a6070', outer:'#aab0b8', picker:'#e8eaee' },
+];
+let currentThemeIdx = 0;
+
+function applyTheme(idx) {
+  if (idx < 0 || idx >= COLOR_THEMES.length) return;
+  currentThemeIdx = idx;
+  const t = COLOR_THEMES[idx], r = document.documentElement.style;
+  r.setProperty('--accent', t.accent); r.setProperty('--accent-dark', t.dark);
+  r.setProperty('--bg-outer', t.outer); r.setProperty('--picker-bg', t.picker);
+  renderColorGrid();
+  try { localStorage.setItem('sc_theme', idx); } catch(e) {}
+}
+
+function renderColorGrid() {
+  const el = document.getElementById('colorGrid');
+  if (!el) return;
+  el.innerHTML = COLOR_THEMES.map((t, i) =>
+    `<div class="color-swatch ${i===currentThemeIdx?'active':''}" style="background:${t.accent};" onclick="applyTheme(${i})" title="${t.name}"></div>`
+  ).join('');
+}
+
+// ── Size data templates ──
+// XXXS(-4) XXS(-2) XS(0) S(2) M(4,6) L(8,10) XL(12,14) XXL(16,18) 3XL(20,22) 4XL(24,26)
+const W_STD = {'CA/US':[-4,-2,0,2,4,6,8,10,12,14,16,18,20,22,24,26],'UK':[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],'EU':[28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58],'AU':[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],'IT':[32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62],'FR':[28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58],'DE':[26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56],'JP':[1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31],'CN':[150,155,160,165,170,175,180,185,190,195,200,205,210,215,220,225],'KR':[33,40,44,55,66,77,88,99,100,105,110,115,120,125,130,135]};
+const M_STD = {'CA/US':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'UK':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'EU':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'AU':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'IT':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'FR':[30,32,34,36,38,40,42,44,46,48,50,52,54,56],'DE':[40,42,44,46,48,50,52,54,56,58,60,62,64,66],'JP':[1,2,3,4,5,6,7,8,9,10,11,12,13,14],'CN':[155,160,165,170,175,180,185,190,195,200,205,210,215,220],'KR':[80,85,90,95,100,105,110,115,120,125,130,135,140,145]};
+const W_JEANS = {'CA/US':[22,23,24,25,26,27,28,29,30,31,32,33,34,36,38,40],'UK':[4,6,6,8,8,10,10,12,12,14,14,16,16,18,20,22],'EU':[30,32,32,34,34,36,36,38,38,40,40,42,42,46,48,50],'AU':[4,6,6,8,8,10,10,12,12,14,14,16,16,18,20,22],'IT':[34,36,36,38,38,40,40,42,42,44,44,46,46,50,52,54],'FR':[30,32,32,34,34,36,36,38,38,40,40,42,42,46,48,50],'DE':[28,30,30,32,32,34,34,36,36,38,38,40,40,44,46,48],'JP':[56,58,61,63,66,68,71,73,76,78,80,83,85,88,91,94],'CN':[155,158,160,163,165,168,170,173,175,178,180,183,185,190,195,200],'KR':[40,44,44,55,55,66,66,77,77,88,88,99,99,105,110,115]};
+const W_SHOES = {'CA/US':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10.5,11.5,12.5,13.5],'EU':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'AU':[2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11.5,12.5,13.5,14.5],'IT':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'FR':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'DE':[34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44,45,46,47,48,49],'JP':[20,20.5,21,21.5,22,22.5,23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,29,30,31,32],'CN':[210,215,220,225,228,230,233,235,238,240,243,245,248,255,260,265,270,280,290,300,310],'KR':[210,215,220,225,230,235,240,245,250,255,260,265,270,275,280,285,290,300,310,320,330]};
+const W_BRA = {'CA/US':[28,30,32,34,36,38,40,42,44,46,48,50],'UK':[28,30,32,34,36,38,40,42,44,46,48,50],'EU':[60,65,70,75,80,85,90,95,100,105,110,115],'AU':[6,8,10,12,14,16,18,20,22,24,26,28],'IT':[0,1,2,3,4,5,6,7,8,9,10,11],'FR':[75,80,85,90,95,100,105,110,115,120,125,130],'DE':[60,65,70,75,80,85,90,95,100,105,110,115],'JP':[60,65,70,75,80,85,90,95,100,105,110,115],'CN':[60,65,70,75,80,85,90,95,100,105,110,115],'KR':[60,65,70,75,80,85,90,95,100,105,110,115]};
+const M_JEANS = {'CA/US':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'UK':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'EU':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'AU':[26,27,28,29,30,31,32,33,34,36,38,40,42,44,46],'IT':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'FR':[36,37,38,39,40,41,42,43,44,46,48,50,52,54,56],'DE':[42,44,44,46,46,48,48,50,50,52,54,56,58,60,62],'JP':[66,68,71,73,76,78,80,83,85,90,95,100,105,110,115],'CN':[165,168,170,173,175,178,180,183,185,190,195,200,205,210,215],'KR':[66,68,71,73,76,78,80,83,85,90,95,100,105,110,115]};
+const M_SHOES = {'CA/US':[5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,12,13,14,15,16],'UK':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'EU':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'AU':[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12,13,14,15],'IT':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'FR':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'DE':[37,37.5,38,38.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,46,47,48,49],'JP':[23,23.5,24,24.5,25,25.5,26,26.5,27,27.5,28,28.5,29,29.5,30,31,32,33,34],'CN':[235,238,240,243,250,253,255,258,260,263,265,268,270,273,280,290,300,310,320],'KR':[235,238,240,243,250,253,255,258,260,263,265,268,270,273,280,290,300,310,320]};
+const M_SHIRT = {'CA/US':[13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,20],'UK':[13,13.5,14,14.5,15,15.5,16,16.5,17,17.5,18,18.5,19,20],'EU':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'AU':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'IT':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'FR':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'DE':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'JP':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'CN':[33,34,36,37,38,39,41,42,43,44,45,46,48,50],'KR':[33,34,36,37,38,39,41,42,43,44,45,46,48,50]};
+
+// Cup sizes — same letter maps across all regions for bra
+const CUP_SIZES = ['AA','A','B','C','D','DD','E','F','G','H'];
+
+// Letter size mappings for W_STD categories (index maps to W_STD index)
+// Indices map to W_STD/M_STD arrays
+const W_LETTER = {'XXXS':0,'XXS':1,'XS':2,'S':3,'M':4,'L':6,'XL':8,'XXL':10,'3XL':12,'4XL':14};
+const M_LETTER = {'XXXS':0,'XXS':1,'XS':2,'S':3,'M':4,'L':6,'XL':8,'XXL':10,'3XL':12,'4XL':13};
+
+const CATEGORIES = [
+  { id:'w_bra',      name:'Bra',       group:'women', systems:W_BRA, hasCup:true },
+  { id:'w_dress',    name:'Dress',     group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'w_jeans',    name:'Jeans',     group:'women', systems:W_JEANS },
+  { id:'w_pants',    name:'Pants',     group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'w_shoes',    name:'Shoes',     group:'women', systems:W_SHOES, hasDecimal:true },
+  { id:'w_skirt',    name:'Skirt',     group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'w_swimwear', name:'Swimwear',  group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'w_top',      name:'Top',       group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'w_jacket',   name:'Jacket',    group:'women', systems:{...W_STD}, hasLetter:'w' },
+  { id:'m_jacket',   name:'Jacket',    group:'men', systems:{...M_STD}, hasLetter:'m' },
+  { id:'m_jeans',    name:'Jeans',     group:'men', systems:M_JEANS },
+  { id:'m_pants',    name:'Pants',     group:'men', systems:{...M_STD}, hasLetter:'m' },
+  { id:'m_shirt',    name:'Shirt',     group:'men', systems:M_SHIRT, hasDecimal:true, hasLetter:'m' },
+  { id:'m_shoes',    name:'Shoes',     group:'men', systems:M_SHOES, hasDecimal:true },
+  { id:'m_shorts',   name:'Shorts',    group:'men', systems:{...M_STD}, hasLetter:'m' },
+  { id:'m_suit',     name:'Suit',      group:'men', systems:{...M_STD}, hasLetter:'m' },
+  { id:'m_swimwear', name:'Swimwear',  group:'men', systems:{...M_STD}, hasLetter:'m' },
+  { id:'m_top',      name:'Top',       group:'men', systems:{...M_STD}, hasLetter:'m' },
+];
+
+// Freeze all data to prevent runtime tampering
+Object.freeze(COLOR_THEMES); COLOR_THEMES.forEach(Object.freeze);
+Object.freeze(CUP_SIZES);
+Object.freeze(W_LETTER); Object.freeze(M_LETTER);
+Object.freeze(W_STD); Object.freeze(M_STD); Object.freeze(W_JEANS); Object.freeze(W_SHOES);
+Object.freeze(W_BRA); Object.freeze(M_JEANS); Object.freeze(M_SHOES); Object.freeze(M_SHIRT);
+CATEGORIES.forEach(c => { Object.freeze(c); Object.freeze(c.systems); Object.values(c.systems).forEach(Object.freeze); });
+Object.freeze(CATEGORIES);
+
+const REGIONS = [
+  {code:'CA/US',name:'Canada / United States',flag:'\u{1F1E8}\u{1F1E6}'},
+  {code:'UK',name:'United Kingdom',flag:'\u{1F1EC}\u{1F1E7}'},
+  {code:'EU',name:'Europe',flag:'\u{1F1EA}\u{1F1FA}'},
+  {code:'AU',name:'Australia',flag:'\u{1F1E6}\u{1F1FA}'},
+  {code:'IT',name:'Italy',flag:'\u{1F1EE}\u{1F1F9}'},
+  {code:'FR',name:'France',flag:'\u{1F1EB}\u{1F1F7}'},
+  {code:'DE',name:'Germany',flag:'\u{1F1E9}\u{1F1EA}'},
+  {code:'JP',name:'Japan',flag:'\u{1F1EF}\u{1F1F5}'},
+  {code:'CN',name:'China',flag:'\u{1F1E8}\u{1F1F3}'},
+  {code:'KR',name:'South Korea',flag:'\u{1F1F0}\u{1F1F7}'},
+];
+
+let currentCategory = 'w_dress';
+let fromSystem = 'CA/US';
+let toSystem = 'UK';
+let inputStr = '0';
+let activeField = 'from';
+let pickerTarget = null;
+let currentCup = 'A';
+let defaultPickerTarget = null;
+
+// Validate helpers
+Object.freeze(REGIONS); REGIONS.forEach(Object.freeze);
+const VALID_CODES = Object.freeze(REGIONS.map(r => r.code));
+function isValidCode(c) { return VALID_CODES.includes(c); }
+function isValidCup(c) { return CUP_SIZES.includes(c); }
+function sanitizeInput(str) { return String(str).replace(/[^0-9.]/g, '').slice(0, 6); }
+
+// Load saved defaults (validate before applying)
+try {
+  const sf = localStorage.getItem('sc_from'); if (sf && isValidCode(sf)) fromSystem = sf;
+  const st = localStorage.getItem('sc_to'); if (st && isValidCode(st)) toSystem = st;
+} catch(e) {}
+
+function getCat() { return CATEGORIES.find(c => c.id === currentCategory); }
+
+function findSizeIndex(sizes, num) {
+  for (let i = 0; i < sizes.length; i++) {
+    if (Math.abs(sizes[i] - num) < 0.001) return i;
+  }
+  return -1;
+}
+
+function isValidSize(numStr, systemCode) {
+  const num = parseFloat(numStr);
+  if (isNaN(num) || numStr === '' || numStr === '0') return false;
+  const cat = getCat();
+  const sizes = cat.systems[systemCode];
+  if (!sizes || sizes.length === 0) return false;
+  return findSizeIndex(sizes, num) !== -1;
+}
+
+function convertSize(inputSize, fromCode, toCode) {
+  const cat = getCat();
+  const from = cat.systems[fromCode], to = cat.systems[toCode];
+  if (!from || !to) return '\u2014';
+  const num = parseFloat(inputSize);
+  if (isNaN(num)) return '\u2014';
+  const idx = findSizeIndex(from, num);
+  if (idx === -1 || idx >= to.length) return '\u2014';
+  return String(to[idx]);
+}
+
+function formatDisplay(numStr) {
+  if (!numStr || numStr === '-') return numStr || '0';
+  if (numStr.length > 1 && numStr[0] === '0' && numStr[1] !== '.') numStr = numStr.replace(/^0+/,'') || '0';
+  return numStr;
+}
+
+// Build display string for bra: "34C"
+function braDisplay(bandStr, cup) {
+  if (!bandStr || bandStr === '0') return '0';
+  return bandStr + cup;
+}
+
+function updateSizeOptionBar() {
+  const bar = document.getElementById('sizeOptionBar');
+  const row = document.getElementById('sizeOptionRow');
+  const cat = getCat();
+
+  if (cat.hasCup) {
+    row.style.display = '';
+    bar.style.display = 'flex';
+    bar.innerHTML = `<button class="size-dropdown-pill" onclick="openSizeOptionSheet()">Cup: ${currentCup} <span class="pill-chevron">▼</span></button>`;
+  } else if (cat.hasLetter) {
+    row.style.display = '';
+    bar.style.display = 'flex';
+    bar.innerHTML = `<button class="size-dropdown-pill" onclick="openSizeOptionSheet()">Size <span class="pill-chevron">▼</span></button>`;
+  } else {
+    row.style.display = 'none';
+    bar.style.display = 'none';
+  }
+}
+
+function openSizeOptionSheet() {
+  const cat = getCat();
+  const list = document.getElementById('sizeOptionList');
+  const title = document.getElementById('sizeOptionSheetTitle');
+
+  if (cat.hasCup) {
+    title.textContent = 'Select Cup Size';
+    list.innerHTML = CUP_SIZES.map(c =>
+      `<div class="picker-item ${c===currentCup?'selected':''}" onclick="selectCup('${c}')">
+        <span class="cup-label">${c}</span><span class="check">&#x2713;</span>
+      </div>`
+    ).join('');
+  } else if (cat.hasLetter) {
+    title.textContent = 'Select Size';
+    const letters = cat.hasLetter === 'w' ? W_LETTER : M_LETTER;
+    list.innerHTML = Object.keys(letters).map(l =>
+      `<div class="picker-item" onclick="selectLetter('${l}')">
+        <span class="cup-label">${l}</span>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('modalOverlay').classList.add('visible');
+  document.getElementById('sizeOptionSheet').classList.add('visible');
+}
+
+function selectCup(cup) {
+  if (!isValidCup(cup)) return;
+  currentCup = cup;
+  closeAllSheets();
+  updateSizeOptionBar();
+  updateDisplay();
+}
+
+function selectLetter(letter) {
+  const cat = getCat();
+  const map = cat.hasLetter === 'w' ? W_LETTER : M_LETTER;
+  const idx = map[letter];
+  if (idx === undefined) return;
+  closeAllSheets();
+  const fromCode = activeField === 'from' ? fromSystem : toSystem;
+  const sizes = cat.systems[fromCode];
+  if (sizes && idx < sizes.length) {
+    inputStr = String(sizes[idx]);
+    updateDisplay();
+  }
+}
+
+function updateKeypad() {
+  const cat = getCat();
+  const btn = document.getElementById('bottomLeftKey');
+  if (cat.hasDecimal) {
+    btn.textContent = '.';
+    btn.onclick = handleDot;
+  } else {
+    btn.textContent = 'C';
+    btn.onclick = handleClear;
+  }
+}
+
+function handleDot() {
+  if (inputStr.includes('.')) return;
+  inputStr += '.';
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const fromEl = document.getElementById('fromValue');
+  const toEl = document.getElementById('toValue');
+  const fromCodeEl = document.getElementById('fromCode');
+  const toCodeEl = document.getElementById('toCode');
+  const cat = getCat();
+  const isBra = cat.hasCup;
+
+  if (activeField === 'from') {
+    fromEl.textContent = isBra ? braDisplay(formatDisplay(inputStr || '0'), currentCup) : formatDisplay(inputStr || '0');
+    const fromCode = fromSystem, toCode = toSystem;
+    if (inputStr === '0' || inputStr === '') {
+      toEl.textContent = '\u2014';
+    } else if (!isValidSize(inputStr, fromCode)) {
+      toEl.textContent = '\u2014';
+    } else {
+      const converted = convertSize(inputStr, fromCode, toCode);
+      toEl.textContent = isBra && converted !== '\u2014' ? converted + currentCup : converted;
+    }
+    document.getElementById('fromRow').classList.add('active');
+    document.getElementById('toRow').classList.remove('active');
+  } else {
+    toEl.textContent = isBra ? braDisplay(formatDisplay(inputStr || '0'), currentCup) : formatDisplay(inputStr || '0');
+    const fromCode = toSystem, toCode = fromSystem;
+    if (inputStr === '0' || inputStr === '') {
+      fromEl.textContent = '\u2014';
+    } else if (!isValidSize(inputStr, fromCode)) {
+      fromEl.textContent = '\u2014';
+    } else {
+      const converted = convertSize(inputStr, fromCode, toCode);
+      fromEl.textContent = isBra && converted !== '\u2014' ? converted + currentCup : converted;
+    }
+    document.getElementById('toRow').classList.add('active');
+    document.getElementById('fromRow').classList.remove('active');
+  }
+
+  fromCodeEl.innerHTML = fromSystem + ' <span class="chevron">&#x25C7;</span>';
+  toCodeEl.innerHTML = toSystem + ' <span class="chevron">&#x25C7;</span>';
+
+  [fromEl, toEl].forEach(el => {
+    const len = el.textContent.length;
+    el.classList.remove('smaller','smallest');
+    if (len > 11) el.classList.add('smallest');
+    else if (len > 8) el.classList.add('smaller');
+  });
+
+  document.getElementById('categoryLabel').innerHTML = cat.name + ' <span class="cat-chevron">&#x25BC;</span>';
+}
+
+function handleNumber(n) {
+  if (inputStr === '0' && n !== '0') inputStr = n;
+  else if (inputStr === '0' && n === '0') {}
+  else {
+    if (inputStr.includes('.')) {
+      const afterDot = inputStr.split('.')[1] || '';
+      if (afterDot.length >= 1) return;
+    }
+    if (inputStr.replace(/[^0-9]/g,'').length >= 4) return;
+    inputStr += n;
+  }
+  updateDisplay();
+}
+function handleClear() { inputStr = '0'; updateDisplay(); }
+function handleBackspace() { inputStr = inputStr.length > 1 ? inputStr.slice(0,-1) : '0'; updateDisplay(); }
+function swapSystems() { [fromSystem, toSystem] = [toSystem, fromSystem]; inputStr = '0'; updateDisplay(); }
+
+// ── Sheets (bottom) ──
+function openSheet(id) {
+  closeAllSheets();
+  document.getElementById('modalOverlay').classList.add('visible');
+  setTimeout(() => document.getElementById(id).classList.add('visible'), 10);
+}
+function closeAllSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('visible'));
+  setTimeout(() => document.getElementById('modalOverlay').classList.remove('visible'), 300);
+}
+
+function openPicker(target) {
+  pickerTarget = target;
+  const selected = target === 'from' ? fromSystem : toSystem;
+  document.getElementById('systemList').innerHTML = REGIONS.map(r =>
+    `<div class="picker-item ${r.code===selected?'selected':''}" onclick="selectSystem('${r.code}')">
+      <span class="flag">${r.flag}</span><div class="info"><div class="code">${r.code}</div><div class="name">${r.name}</div></div><span class="check">&#x2713;</span>
+    </div>`
+  ).join('');
+  openSheet('systemSheet');
+}
+
+function selectSystem(code) {
+  if (!isValidCode(code)) return;
+  if (pickerTarget === 'from') {
+    if (code === toSystem) toSystem = fromSystem;
+    fromSystem = code; activeField = 'from';
+  } else {
+    if (code === fromSystem) fromSystem = toSystem;
+    toSystem = code; activeField = 'to';
+  }
+  closeAllSheets(); updateDisplay();
+}
+
+function renderCategoryList(filter) {
+  const q = (filter || '').toLowerCase();
+  const women = CATEGORIES.filter(c => c.group === 'women' && c.name.toLowerCase().includes(q));
+  const men = CATEGORIES.filter(c => c.group === 'men' && c.name.toLowerCase().includes(q));
+  const renderItems = items => items.map(c =>
+    `<div class="cat-item ${c.id===currentCategory?'selected':''}" onclick="selectCategory('${c.id}')">
+      <span class="cat-name">${c.name}</span><span class="check">&#x2713;</span>
+    </div>`
+  ).join('');
+
+  let html = '';
+  if (women.length) html += '<div class="cat-group-header">Women\'s</div>' + renderItems(women);
+  if (men.length) html += '<div class="cat-group-header">Men\'s</div>' + renderItems(men);
+  if (!women.length && !men.length) html = '<div class="search-no-results">No categories found</div>';
+  document.getElementById('categoryList').innerHTML = html;
+}
+
+function openCategoryPicker() {
+  renderCategoryList('');
+  openSheet('categorySheet');
+  setTimeout(() => { const s = document.getElementById('catSearch'); s.value = ''; s.focus(); }, 350);
+}
+
+function filterCategories() {
+  renderCategoryList(document.getElementById('catSearch').value);
+}
+
+function selectCategory(id) {
+  currentCategory = id;
+  inputStr = '0';
+  closeAllSheets();
+  updateSizeOptionBar();
+  updateKeypad();
+  updateDisplay();
+}
+
+// ── Full-Screen Pages ──
+function openPage(id) {
+  document.getElementById(id).classList.add('visible');
+}
+function closePage(id) {
+  document.getElementById(id).classList.remove('visible');
+}
+
+// ── Clear All Data ──
+function clearAllData() {
+  if (!confirm('Reset all preferences to defaults?')) return;
+  try {
+    localStorage.removeItem('sc_theme');
+    localStorage.removeItem('sc_from');
+    localStorage.removeItem('sc_to');
+    localStorage.removeItem('sc_onboarded');
+  } catch(e) {}
+  fromSystem = 'CA/US'; toSystem = 'UK'; currentThemeIdx = 0; currentCategory = 'w_dress'; inputStr = '0'; currentCup = 'A';
+  applyTheme(0);
+  document.getElementById('settingFrom').innerHTML = 'CA/US <span class="setting-chevron">&#x203A;</span>';
+  document.getElementById('settingTo').innerHTML = 'UK <span class="setting-chevron">&#x203A;</span>';
+  updateSizeOptionBar(); updateKeypad(); updateDisplay();
+}
+
+// ── Default Country Pickers (in settings) ──
+function openDefaultFromPicker() {
+  defaultPickerTarget = 'from';
+  document.getElementById('defaultCountryTitle').textContent = 'Convert From';
+  renderDefaultCountryList(fromSystem);
+  document.getElementById('defaultCountrySheet').classList.add('visible');
+}
+function openDefaultToPicker() {
+  defaultPickerTarget = 'to';
+  document.getElementById('defaultCountryTitle').textContent = 'Convert To';
+  renderDefaultCountryList(toSystem);
+  document.getElementById('defaultCountrySheet').classList.add('visible');
+}
+function renderDefaultCountryList(selected) {
+  document.getElementById('defaultCountryList').innerHTML = REGIONS.map(r =>
+    `<div class="picker-item ${r.code===selected?'selected':''}" onclick="selectDefaultCountry('${r.code}')">
+      <span class="flag">${r.flag}</span><div class="info"><div class="code">${r.code}</div><div class="name">${r.name}</div></div><span class="check">&#x2713;</span>
+    </div>`
+  ).join('');
+}
+function selectDefaultCountry(code) {
+  if (!isValidCode(code)) return;
+  if (defaultPickerTarget === 'from') {
+    if (code === toSystem) toSystem = fromSystem;
+    fromSystem = code;
+    try { localStorage.setItem('sc_from', code); localStorage.setItem('sc_to', toSystem); } catch(e) {}
+    document.getElementById('settingFrom').innerHTML = code + ' <span class="setting-chevron">&#x203A;</span>';
+    document.getElementById('settingTo').innerHTML = toSystem + ' <span class="setting-chevron">&#x203A;</span>';
+  } else {
+    if (code === fromSystem) fromSystem = toSystem;
+    toSystem = code;
+    try { localStorage.setItem('sc_to', code); localStorage.setItem('sc_from', fromSystem); } catch(e) {}
+    document.getElementById('settingTo').innerHTML = code + ' <span class="setting-chevron">&#x203A;</span>';
+    document.getElementById('settingFrom').innerHTML = fromSystem + ' <span class="setting-chevron">&#x203A;</span>';
+  }
+  closeDefaultCountrySheet();
+  updateDisplay();
+}
+function closeDefaultCountrySheet() {
+  document.getElementById('defaultCountrySheet').classList.remove('visible');
+}
+
+// ── Onboarding ──
+const OB_STEPS = [
+  { title:'Choose a Category', desc:'Tap here to pick what clothing type you want to convert — dresses, shoes, jeans, and more.', top:68, left:56, arrowClass:'arrow-top' },
+  { title:'Enter Your Size', desc:'Use the keypad to type in your size number. The conversion appears automatically above.', top:420, left:56, arrowClass:'arrow-bottom' },
+  { title:'Switch Regions', desc:'Tap a region code to change which country you\'re converting from or to.', top:280, left:56, arrowClass:'arrow-top' },
+  { title:'Swap Direction', desc:'Tap the arrows to quickly swap your from and to sizing systems.', top:240, left:56, arrowClass:'arrow-top' },
+];
+let obStep = 0;
+
+function showOnboarding() {
+  obStep = 0;
+  document.getElementById('onboardingOverlay').classList.add('visible');
+  renderOnboardingStep();
+}
+
+function renderOnboardingStep() {
+  const step = OB_STEPS[obStep];
+  const bubble = document.getElementById('onboardingBubble');
+  bubble.style.display = 'block';
+  bubble.style.top = step.top + 'px';
+  bubble.style.left = step.left + 'px';
+  bubble.className = 'onboarding-bubble ' + step.arrowClass;
+  document.getElementById('obStep').textContent = 'Step ' + (obStep + 1) + ' of ' + OB_STEPS.length;
+  document.getElementById('obTitle').textContent = step.title;
+  document.getElementById('obDesc').textContent = step.desc;
+  document.getElementById('obNextBtn').textContent = obStep === OB_STEPS.length - 1 ? 'Got it' : 'Next';
+  document.getElementById('obDots').innerHTML = OB_STEPS.map((_, i) =>
+    `<div class="ob-dot ${i===obStep?'active':''}"></div>`
+  ).join('');
+}
+
+function nextOnboardingStep() {
+  obStep++;
+  if (obStep >= OB_STEPS.length) {
+    dismissOnboarding();
+  } else {
+    renderOnboardingStep();
+  }
+}
+
+function dismissOnboarding() {
+  document.getElementById('onboardingOverlay').classList.remove('visible');
+  document.getElementById('onboardingBubble').style.display = 'none';
+  try { localStorage.setItem('sc_onboarded', '1'); } catch(e) {}
+}
+
+// ── Init ──
+try { const s = localStorage.getItem('sc_theme'); if (s !== null) { const idx = parseInt(s, 10); if (idx >= 0 && idx < COLOR_THEMES.length) currentThemeIdx = idx; } } catch(e) {}
+applyTheme(currentThemeIdx);
+updateSizeOptionBar();
+updateKeypad();
+updateDisplay();
+
+// Update settings display
+document.getElementById('settingFrom').innerHTML = fromSystem + ' <span class="setting-chevron">&#x203A;</span>';
+document.getElementById('settingTo').innerHTML = toSystem + ' <span class="setting-chevron">&#x203A;</span>';
+
+// Show onboarding on first visit
+try {
+  if (!localStorage.getItem('sc_onboarded')) {
+    setTimeout(showOnboarding, 400);
+  }
+} catch(e) {}
+
+// Long-press backspace to clear (universal clear for decimal categories)
+(function() {
+  const bk = document.getElementById('backspaceKey');
+  let timer = null;
+  bk.addEventListener('pointerdown', function() { timer = setTimeout(function() { handleClear(); timer = null; }, 600); });
+  bk.addEventListener('pointerup', function() { if (timer) clearTimeout(timer); });
+  bk.addEventListener('pointerleave', function() { if (timer) clearTimeout(timer); });
+})();
+
+function fitPhone() {
+  const scale = Math.min(window.innerWidth / 413, window.innerHeight / 872, 1);
+  document.documentElement.style.setProperty('--phone-scale', scale);
+}
+fitPhone();
+window.addEventListener('resize', fitPhone);
+</script>
+</body>
+</html>

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Size Converter</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg-outer);
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  :root {
+    --accent: #b8e4f0;
+    --accent-dark: #4a7a85;
+    --bg-outer: #8ecad6;
+    --picker-bg: #e8f4f8;
+  }
+
+  .iphone-frame {
+    width: 393px;
+    height: 852px;
+    transform: scale(var(--phone-scale, 0.75));
+    transform-origin: center center;
+    position: relative;
+    border-radius: 55px;
+    background: #e0e0e0;
+    box-shadow:
+      0 0 0 2px #ccc,
+      0 0 0 4px #e0e0e0,
+      0 0 0 6px #bbb,
+      0 30px 80px rgba(0,0,0,0.25),
+      0 10px 30px rgba(0,0,0,0.15),
+      inset 0 0 2px rgba(255,255,255,0.3);
+    overflow: hidden;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 37px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  .screen {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    border-radius: 51px;
+    overflow: hidden;
+    background: var(--accent);
+  }
+
+  .iphone-frame::before {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 172px;
+    width: 4px;
+    height: 80px;
+    background: #bbb;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .iphone-frame::after {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 145px;
+    width: 4px;
+    height: 36px;
+    background: #bbb;
+    border-radius: 2px 0 0 2px;
+    box-shadow: 0 52px 0 #bbb, 0 92px 0 #bbb;
+  }
+
+  .calculator {
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px 0;
+    height: 58px;
+    flex-shrink: 0;
+  }
+
+  .status-time {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2a2a;
+  }
+
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-icons svg { fill: #2a2a2a; }
+
+  /* Category Bar */
+  .category-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 20px 2px;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .category-label {
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.2px;
+  }
+
+  .category-label:active { opacity: 0.5; }
+
+  .category-label .cat-chevron {
+    font-size: 10px;
+    opacity: 0.5;
+    transition: transform 0.2s;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 20px;
+    flex-shrink: 0;
+  }
+
+  .top-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.12);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .top-btn svg { fill: #2a2a2a; }
+
+  .top-spacer { width: 40px; }
+
+  /* Display Area */
+  .display-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 24px 16px;
+  }
+
+  .currency-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .currency-row.from { margin-bottom: 4px; }
+
+  .currency-value {
+    font-size: 70px;
+    font-weight: 300;
+    color: #1a1a1a;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    transition: font-size 0.15s ease;
+    cursor: pointer;
+  }
+
+  .currency-value.smaller { font-size: 50px; }
+  .currency-value.smallest { font-size: 38px; }
+
+  .currency-code {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--accent-dark);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .currency-code .chevron {
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  .currency-row.active .currency-code { color: #2a2a2a; }
+
+  .swap-divider {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    gap: 12px;
+  }
+
+  .swap-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .swap-btn svg { fill: #2a2a2a; }
+
+  .divider-line {
+    flex: 1;
+    height: 0.5px;
+    background: rgba(0,0,0,0.15);
+  }
+
+  /* Keypad */
+  .keypad {
+    padding: 0 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .key-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .key {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    font-size: 32px;
+    font-weight: 400;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.1s;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .key:active { opacity: 0.6; }
+
+  .key-number {
+    background: rgba(255,255,255,0.55);
+    color: #1a1a1a;
+  }
+
+  .key-number:active {
+    background: rgba(255,255,255,0.8);
+    opacity: 1;
+  }
+
+  .key-function {
+    background: rgba(255,255,255,0.75);
+    color: #1a1a1a;
+    font-size: 28px;
+  }
+
+  .key-function:active {
+    background: rgba(255,255,255,0.95);
+    opacity: 1;
+  }
+
+  .key svg { width: 28px; height: 28px; }
+  .key-function svg { fill: #1a1a1a; }
+
+  /* Home Indicator */
+  .home-indicator {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding: 8px 0 10px;
+  }
+
+  .home-indicator-bar {
+    width: 134px;
+    height: 5px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    opacity: 0.2;
+  }
+
+  /* Modal Overlay */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    display: none;
+    z-index: 10;
+  }
+
+  .modal-overlay.visible { display: block; }
+
+  /* Shared Picker / Sheet */
+  .sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--picker-bg);
+    border-radius: 14px 14px 0 0;
+    max-height: 70%;
+    display: flex;
+    flex-direction: column;
+    z-index: 11;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sheet.visible { transform: translateY(0); }
+
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.1);
+  }
+
+  .sheet-header span {
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .sheet-close {
+    background: rgba(0,0,0,0.1);
+    border: none;
+    color: #1a1a1a;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sheet-list {
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .picker-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    gap: 14px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  }
+
+  .picker-item:active { background: rgba(0,0,0,0.05); }
+
+  .picker-item .flag { font-size: 28px; }
+
+  .picker-item .info { flex: 1; }
+
+  .picker-item .info .code {
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .picker-item .info .name {
+    color: var(--accent-dark);
+    font-size: 13px;
+  }
+
+  .picker-item .check {
+    color: #2a2a2a;
+    font-size: 20px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .picker-item.selected .check { display: block; }
+
+  /* Category Picker Items */
+  .cat-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    gap: 14px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  }
+
+  .cat-item:active { background: rgba(0,0,0,0.05); }
+
+  .cat-item .cat-icon { font-size: 24px; }
+
+  .cat-item .cat-name {
+    flex: 1;
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .cat-item .check {
+    color: #2a2a2a;
+    font-size: 20px;
+    font-weight: 600;
+    display: none;
+  }
+
+  .cat-item.selected .check { display: block; }
+
+  /* Menu Items */
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    gap: 14px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+  }
+
+  .menu-item:active { background: rgba(0,0,0,0.05); }
+
+  .menu-item .menu-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .menu-item .menu-label {
+    flex: 1;
+    color: #1a1a1a;
+    font-size: 17px;
+    font-weight: 400;
+  }
+
+  .menu-item .menu-arrow {
+    color: rgba(0,0,0,0.25);
+    font-size: 16px;
+  }
+
+  /* Settings Color Grid */
+  .color-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px;
+    justify-content: center;
+  }
+
+  .color-swatch {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    position: relative;
+  }
+
+  .color-swatch:active { transform: scale(0.9); }
+
+  .color-swatch.active {
+    border-color: #1a1a1a;
+  }
+
+  .color-swatch.active::after {
+    content: '\2713';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .settings-section-title {
+    color: rgba(0,0,0,0.45);
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 20px 20px 8px;
+  }
+
+  .settings-info {
+    color: rgba(0,0,0,0.4);
+    font-size: 13px;
+    padding: 8px 20px 0;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="iphone-frame">
+  <div class="dynamic-island"></div>
+  <div class="screen">
+    <div class="calculator">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="1" width="3" height="11" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.4L14 4C12.4 2.5 10.3 1.6 8 1.6S3.6 2.5 2 4L3.4 5.4C4.6 4.3 6.2 3.6 8 3.6ZM8 7.2C9 7.2 9.9 7.6 10.6 8.2L12 6.8C10.9 5.8 9.5 5.2 8 5.2S5.1 5.8 4 6.8L5.4 8.2C6.1 7.6 7 7.2 8 7.2ZM9.4 10.4L8 12L6.6 10.4C7 9.9 7.5 9.6 8 9.6S9 9.9 9.4 10.4Z"/></svg>
+          <svg width="27" height="13" viewBox="0 0 27 13"><rect x="0" y="1" width="22" height="11" rx="2" stroke="#2a2a2a" stroke-width="1" fill="none"/><rect x="23" y="4" width="2" height="5" rx="0.5" fill="#2a2a2a" opacity="0.35"/><rect x="1.5" y="2.5" width="19" height="8" rx="1" fill="#2a2a2a"/></svg>
+        </div>
+      </div>
+
+      <!-- Category Label (under Dynamic Island) -->
+      <div class="category-bar">
+        <button class="category-label" onclick="openCategoryPicker()" id="categoryLabel">
+          Dress <span class="cat-chevron">&#x25BC;</span>
+        </button>
+      </div>
+
+      <!-- Top Bar: spacer left, hamburger right -->
+      <div class="top-bar">
+        <div class="top-spacer"></div>
+        <button class="top-btn" aria-label="Menu" onclick="openMenu()">
+          <svg width="20" height="20" viewBox="0 0 20 20"><path d="M3 5h14M3 10h14M3 15h14" stroke="#2a2a2a" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+        </button>
+      </div>
+
+      <!-- Display -->
+      <div class="display-area">
+        <div class="currency-row from active" id="fromRow">
+          <span class="currency-value" id="fromValue" onclick="openPicker('from')">8</span>
+          <span class="currency-code" id="fromCode" onclick="openPicker('from')">CA/US <span class="chevron">&#x25C7;</span></span>
+        </div>
+
+        <div class="swap-divider">
+          <button class="swap-btn" onclick="swapSystems()" aria-label="Swap">
+            <svg width="22" height="22" viewBox="0 0 22 22"><path d="M7 2L7 18M7 2L3 6M7 2L11 6M15 20L15 4M15 20L11 16M15 20L19 16" stroke="#2a2a2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </button>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="currency-row to" id="toRow">
+          <span class="currency-value" id="toValue" onclick="openPicker('to')">12</span>
+          <span class="currency-code" id="toCode" onclick="openPicker('to')">UK <span class="chevron">&#x25C7;</span></span>
+        </div>
+      </div>
+
+      <!-- Keypad -->
+      <div class="keypad">
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('7')">7</button>
+          <button class="key key-number" onclick="handleNumber('8')">8</button>
+          <button class="key key-number" onclick="handleNumber('9')">9</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('4')">4</button>
+          <button class="key key-number" onclick="handleNumber('5')">5</button>
+          <button class="key key-number" onclick="handleNumber('6')">6</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-number" onclick="handleNumber('1')">1</button>
+          <button class="key key-number" onclick="handleNumber('2')">2</button>
+          <button class="key key-number" onclick="handleNumber('3')">3</button>
+        </div>
+        <div class="key-row">
+          <button class="key key-function" onclick="handleClear()">C</button>
+          <button class="key key-number" onclick="handleNumber('0')">0</button>
+          <button class="key key-function" onclick="handleBackspace()">
+            <svg viewBox="0 0 28 28" width="28" height="28"><path d="M10.7 5L2 14l8.7 9H26V5H10.7z" stroke="#1a1a1a" stroke-width="1.8" fill="none" stroke-linejoin="round"/><line x1="14.5" y1="10" x2="21.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/><line x1="21.5" y1="10" x2="14.5" y2="17" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Home Indicator -->
+      <div class="home-indicator">
+        <div class="home-indicator-bar"></div>
+      </div>
+
+      <!-- Overlay for all sheets -->
+      <div class="modal-overlay" id="modalOverlay" onclick="closeAllSheets()"></div>
+
+      <!-- Size System Picker -->
+      <div class="sheet" id="systemSheet">
+        <div class="sheet-header">
+          <span>Select Size System</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" id="systemList"></div>
+      </div>
+
+      <!-- Category Picker -->
+      <div class="sheet" id="categorySheet">
+        <div class="sheet-header">
+          <span>Clothing Category</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" id="categoryList"></div>
+      </div>
+
+      <!-- Menu -->
+      <div class="sheet" id="menuSheet">
+        <div class="sheet-header">
+          <span>Menu</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" id="menuList"></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="sheet" id="settingsSheet">
+        <div class="sheet-header">
+          <span>Settings</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" id="settingsContent">
+          <div class="settings-section-title">App Color</div>
+          <div class="color-grid" id="colorGrid"></div>
+          <div class="settings-info">Choose a color theme for the app. This changes the background and accent colors throughout.</div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="sheet" id="aboutSheet">
+        <div class="sheet-header">
+          <span>About</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" style="padding:24px 20px;color:#1a1a1a;">
+          <div style="text-align:center;margin-bottom:20px;">
+            <div style="font-size:48px;margin-bottom:8px;">&#x1F457;</div>
+            <div style="font-size:22px;font-weight:600;">Size Converter</div>
+            <div style="font-size:14px;color:rgba(0,0,0,0.4);margin-top:4px;">Version 1.0.0</div>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);text-align:center;">
+            Instantly convert clothing sizes between international sizing systems. Supports 10 categories and 10 regional standards.
+          </p>
+        </div>
+      </div>
+
+      <!-- Privacy -->
+      <div class="sheet" id="privacySheet">
+        <div class="sheet-header">
+          <span>Privacy Policy</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" style="padding:20px;color:#1a1a1a;">
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">
+            <strong style="color:#1a1a1a;">Your privacy matters.</strong> Size Converter does not collect, store, or transmit any personal data.
+          </p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">
+            All conversions are performed locally on your device. No analytics, no tracking, no third-party services.
+          </p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">
+            Your selected preferences (color theme, category) are stored only on your device using local storage.
+          </p>
+          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">
+            Last updated: April 2026
+          </p>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="sheet" id="termsSheet">
+        <div class="sheet-header">
+          <span>Terms of Use</span>
+          <button class="sheet-close" onclick="closeAllSheets()">&#x2715;</button>
+        </div>
+        <div class="sheet-list" style="padding:20px;color:#1a1a1a;">
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">
+            Size Converter is provided as-is for informational purposes. Size conversions are approximate and may vary by brand and manufacturer.
+          </p>
+          <p style="font-size:15px;line-height:1.6;color:rgba(0,0,0,0.6);margin-bottom:14px;">
+            Always check the specific brand's size chart for the most accurate fit. We are not responsible for sizing discrepancies.
+          </p>
+          <p style="font-size:13px;line-height:1.5;color:rgba(0,0,0,0.35);">
+            Last updated: April 2026
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Color Themes ──
+const COLOR_THEMES = [
+  { name: 'Blue',    accent: '#b8e4f0', dark: '#4a7a85', outer: '#8ecad6', picker: '#e8f4f8' },
+  { name: 'Rose',    accent: '#f0c4ca', dark: '#8a5060', outer: '#d6a0aa', picker: '#f8e4e8' },
+  { name: 'Sage',    accent: '#c4dcc4', dark: '#5a7a5a', outer: '#a0c4a0', picker: '#e4f0e4' },
+  { name: 'Lavender',accent: '#d4c4e8', dark: '#6a5a80', outer: '#b8a0d0', picker: '#ece4f4' },
+  { name: 'Peach',   accent: '#f0d8c4', dark: '#8a6a50', outer: '#d6b8a0', picker: '#f8ece4' },
+  { name: 'Sand',    accent: '#e8dcc8', dark: '#7a7060', outer: '#d0c4a8', picker: '#f4efe4' },
+  { name: 'Sky',     accent: '#c4d8f0', dark: '#506a8a', outer: '#a0bcd6', picker: '#e4ecf8' },
+  { name: 'Coral',   accent: '#f0c8b8', dark: '#8a5a4a', outer: '#d6a890', picker: '#f8e8e0' },
+  { name: 'Mint',    accent: '#b8f0e0', dark: '#4a8a72', outer: '#8ed6c0', picker: '#e0f8f0' },
+  { name: 'Slate',   accent: '#ccd0d8', dark: '#5a6070', outer: '#aab0b8', picker: '#e8eaee' },
+];
+
+let currentThemeIdx = 0;
+
+function applyTheme(idx) {
+  currentThemeIdx = idx;
+  const t = COLOR_THEMES[idx];
+  const r = document.documentElement.style;
+  r.setProperty('--accent', t.accent);
+  r.setProperty('--accent-dark', t.dark);
+  r.setProperty('--bg-outer', t.outer);
+  r.setProperty('--picker-bg', t.picker);
+  renderColorGrid();
+  try { localStorage.setItem('sc_theme', idx); } catch(e) {}
+}
+
+function renderColorGrid() {
+  const grid = document.getElementById('colorGrid');
+  grid.innerHTML = COLOR_THEMES.map((t, i) => `
+    <div class="color-swatch ${i === currentThemeIdx ? 'active' : ''}"
+         style="background:${t.accent};"
+         onclick="applyTheme(${i})"
+         title="${t.name}"></div>
+  `).join('');
+}
+
+// ── Categories with size data per region ──
+const CATEGORIES = [
+  { id: 'dress',   name: 'Dress',     icon: '\u{1F457}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20,22,24],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24,26,28],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52,54,56],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24,26,28],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56,58,60],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52,54,56],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50,52,54],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23,25,27],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210,215,220],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120,125,130],
+    }},
+  { id: 'top',     name: 'Top',       icon: '\u{1F455}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+  { id: 'pants',   name: 'Pants',     icon: '\u{1F456}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+  { id: 'skirt',   name: 'Skirt',     icon: '\u{1FA73}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+  { id: 'shoes',   name: 'Shoes',     icon: '\u{1F45F}',
+    systems: {
+      'CA/US': [5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,12],
+      'UK':    [2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9.5],
+      'EU':    [35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44],
+      'AU':    [3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10.5],
+      'IT':    [35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44],
+      'FR':    [35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44],
+      'DE':    [35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42,43,44],
+      'JP':    [21,21.5,22,22.5,23,23.5,24,24.5,25,25.5,26,26.5,27,28],
+      'CN':    [225,228,230,233,235,238,240,243,245,248,255,260,265,275],
+      'KR':    [220,225,230,235,240,245,250,255,260,265,270,275,280,290],
+    }},
+  { id: 'bra',     name: 'Bra',       icon: '\u{1FA72}',
+    systems: {
+      'CA/US': [30,32,34,36,38,40,42,44,46,48],
+      'UK':    [30,32,34,36,38,40,42,44,46,48],
+      'EU':    [65,70,75,80,85,90,95,100,105,110],
+      'AU':    [8,10,12,14,16,18,20,22,24,26],
+      'IT':    [0,1,2,3,4,5,6,7,8,9],
+      'FR':    [80,85,90,95,100,105,110,115,120,125],
+      'DE':    [65,70,75,80,85,90,95,100,105,110],
+      'JP':    [65,70,75,80,85,90,95,100,105,110],
+      'CN':    [65,70,75,80,85,90,95,100,105,110],
+      'KR':    [65,70,75,80,85,90,95,100,105,110],
+    }},
+  { id: 'jacket',  name: 'Jacket',    icon: '\u{1F9E5}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+  { id: 'jeans',   name: 'Jeans',     icon: '\u{1F456}',
+    systems: {
+      'CA/US': [24,25,26,27,28,29,30,31,32,33,34,36],
+      'UK':    [6,8,8,10,10,12,12,14,14,16,16,18],
+      'EU':    [32,34,34,36,36,38,38,40,40,42,42,46],
+      'AU':    [6,8,8,10,10,12,12,14,14,16,16,18],
+      'IT':    [36,38,38,40,40,42,42,44,44,46,46,50],
+      'FR':    [32,34,34,36,36,38,38,40,40,42,42,46],
+      'DE':    [30,32,32,34,34,36,36,38,38,40,40,44],
+      'JP':    [58,61,63,66,68,71,73,76,78,80,83,88],
+      'CN':    [160,163,165,168,170,173,175,178,180,183,185,190],
+      'KR':    [44,55,55,66,66,77,77,88,88,99,99,105],
+    }},
+  { id: 'swimwear',name: 'Swimwear',  icon: '\u{1FA71}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+  { id: 'suit',    name: 'Suit',      icon: '\u{1F935}',
+    systems: {
+      'CA/US': [0,2,4,6,8,10,12,14,16,18,20],
+      'UK':    [4,6,8,10,12,14,16,18,20,22,24],
+      'EU':    [32,34,36,38,40,42,44,46,48,50,52],
+      'AU':    [4,6,8,10,12,14,16,18,20,22,24],
+      'IT':    [36,38,40,42,44,46,48,50,52,54,56],
+      'FR':    [32,34,36,38,40,42,44,46,48,50,52],
+      'DE':    [30,32,34,36,38,40,42,44,46,48,50],
+      'JP':    [3,5,7,9,11,13,15,17,19,21,23],
+      'CN':    [160,165,170,175,180,185,190,195,200,205,210],
+      'KR':    [44,55,66,77,88,99,100,105,110,115,120],
+    }},
+];
+
+const REGIONS = [
+  { code: 'CA/US', name: 'Canada / United States', flag: '\u{1F1E8}\u{1F1E6}' },
+  { code: 'UK',    name: 'United Kingdom',         flag: '\u{1F1EC}\u{1F1E7}' },
+  { code: 'EU',    name: 'Europe',                  flag: '\u{1F1EA}\u{1F1FA}' },
+  { code: 'AU',    name: 'Australia',               flag: '\u{1F1E6}\u{1F1FA}' },
+  { code: 'IT',    name: 'Italy',                   flag: '\u{1F1EE}\u{1F1F9}' },
+  { code: 'FR',    name: 'France',                  flag: '\u{1F1EB}\u{1F1F7}' },
+  { code: 'DE',    name: 'Germany',                 flag: '\u{1F1E9}\u{1F1EA}' },
+  { code: 'JP',    name: 'Japan',                   flag: '\u{1F1EF}\u{1F1F5}' },
+  { code: 'CN',    name: 'China',                   flag: '\u{1F1E8}\u{1F1F3}' },
+  { code: 'KR',    name: 'South Korea',             flag: '\u{1F1F0}\u{1F1F7}' },
+];
+
+let currentCategory = 'dress';
+let fromSystem = 'CA/US';
+let toSystem = 'UK';
+let inputStr = '8';
+let activeField = 'from';
+let pickerTarget = null;
+
+function getCat() { return CATEGORIES.find(c => c.id === currentCategory); }
+
+function convertSize(inputSize, fromCode, toCode) {
+  const cat = getCat();
+  const from = cat.systems[fromCode];
+  const to = cat.systems[toCode];
+  if (!from || !to) return '\u2014';
+  const num = parseFloat(inputSize);
+  if (isNaN(num)) return '\u2014';
+
+  let closestIdx = 0, closestDiff = Infinity;
+  for (let i = 0; i < from.length; i++) {
+    const diff = Math.abs(from[i] - num);
+    if (diff < closestDiff) { closestDiff = diff; closestIdx = i; }
+  }
+  if (closestIdx < to.length && from[closestIdx] === num) return String(to[closestIdx]);
+
+  let lowerIdx = -1;
+  for (let i = 0; i < from.length - 1; i++) {
+    if (num >= from[i] && num <= from[i + 1]) { lowerIdx = i; break; }
+  }
+  if (lowerIdx === -1 || lowerIdx + 1 >= to.length) return String(to[Math.min(closestIdx, to.length - 1)]);
+
+  const ratio = (num - from[lowerIdx]) / (from[lowerIdx + 1] - from[lowerIdx]);
+  const result = to[lowerIdx] + ratio * (to[lowerIdx + 1] - to[lowerIdx]);
+  return Number.isInteger(result) ? String(result) : result.toFixed(1);
+}
+
+function formatDisplay(numStr) {
+  if (!numStr || numStr === '-') return numStr || '0';
+  if (numStr.length > 1 && numStr[0] === '0' && numStr[1] !== '.') {
+    numStr = numStr.replace(/^0+/, '') || '0';
+  }
+  return numStr;
+}
+
+function updateDisplay() {
+  const fromEl = document.getElementById('fromValue');
+  const toEl = document.getElementById('toValue');
+  const fromCodeEl = document.getElementById('fromCode');
+  const toCodeEl = document.getElementById('toCode');
+
+  if (activeField === 'from') {
+    fromEl.textContent = formatDisplay(inputStr || '0');
+    toEl.textContent = convertSize(inputStr, fromSystem, toSystem);
+    document.getElementById('fromRow').classList.add('active');
+    document.getElementById('toRow').classList.remove('active');
+  } else {
+    toEl.textContent = formatDisplay(inputStr || '0');
+    fromEl.textContent = convertSize(inputStr, toSystem, fromSystem);
+    document.getElementById('toRow').classList.add('active');
+    document.getElementById('fromRow').classList.remove('active');
+  }
+
+  fromCodeEl.innerHTML = fromSystem + ' <span class="chevron">&#x25C7;</span>';
+  toCodeEl.innerHTML = toSystem + ' <span class="chevron">&#x25C7;</span>';
+
+  [fromEl, toEl].forEach(el => {
+    const len = el.textContent.length;
+    el.classList.remove('smaller', 'smallest');
+    if (len > 11) el.classList.add('smallest');
+    else if (len > 8) el.classList.add('smaller');
+  });
+
+  document.getElementById('categoryLabel').innerHTML =
+    getCat().name + ' <span class="cat-chevron">&#x25BC;</span>';
+}
+
+function handleNumber(n) {
+  if (inputStr === '0' && n !== '0') inputStr = n;
+  else if (inputStr === '0' && n === '0') {}
+  else { if (inputStr.replace(/[^0-9]/g, '').length >= 4) return; inputStr += n; }
+  updateDisplay();
+}
+
+function handleClear() { inputStr = '0'; updateDisplay(); }
+
+function handleBackspace() {
+  inputStr = inputStr.length > 1 ? inputStr.slice(0, -1) : '0';
+  updateDisplay();
+}
+
+function swapSystems() {
+  [fromSystem, toSystem] = [toSystem, fromSystem];
+  updateDisplay();
+}
+
+// ── Sheet management ──
+function openSheet(id) {
+  closeAllSheets();
+  document.getElementById('modalOverlay').classList.add('visible');
+  setTimeout(() => document.getElementById(id).classList.add('visible'), 10);
+}
+
+function closeAllSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('visible'));
+  setTimeout(() => document.getElementById('modalOverlay').classList.remove('visible'), 300);
+}
+
+function openPicker(target) {
+  pickerTarget = target;
+  const selected = target === 'from' ? fromSystem : toSystem;
+  document.getElementById('systemList').innerHTML = REGIONS.map(r => `
+    <div class="picker-item ${r.code === selected ? 'selected' : ''}" onclick="selectSystem('${r.code}')">
+      <span class="flag">${r.flag}</span>
+      <div class="info">
+        <div class="code">${r.code}</div>
+        <div class="name">${r.name}</div>
+      </div>
+      <span class="check">&#x2713;</span>
+    </div>
+  `).join('');
+  openSheet('systemSheet');
+}
+
+function selectSystem(code) {
+  if (pickerTarget === 'from') { fromSystem = code; activeField = 'from'; }
+  else { toSystem = code; activeField = 'to'; }
+  closeAllSheets();
+  updateDisplay();
+}
+
+function openCategoryPicker() {
+  document.getElementById('categoryList').innerHTML = CATEGORIES.map(c => `
+    <div class="cat-item ${c.id === currentCategory ? 'selected' : ''}" onclick="selectCategory('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-name">${c.name}</span>
+      <span class="check">&#x2713;</span>
+    </div>
+  `).join('');
+  openSheet('categorySheet');
+}
+
+function selectCategory(id) {
+  currentCategory = id;
+  inputStr = '0';
+  closeAllSheets();
+  updateDisplay();
+}
+
+function openMenu() {
+  const items = [
+    { icon: '\u2699\uFE0F',  label: 'Settings',       action: "openSheet('settingsSheet')" },
+    { icon: '\u2139\uFE0F',  label: 'About',           action: "openSheet('aboutSheet')" },
+    { icon: '\u{1F512}',     label: 'Privacy Policy',  action: "openSheet('privacySheet')" },
+    { icon: '\u{1F4C4}',     label: 'Terms of Use',    action: "openSheet('termsSheet')" },
+    { icon: '\u2B50',        label: 'Rate App',        action: "" },
+    { icon: '\u{1F4E4}',     label: 'Share App',       action: "" },
+  ];
+  document.getElementById('menuList').innerHTML = items.map(m => `
+    <div class="menu-item" onclick="${m.action}">
+      <div class="menu-icon">${m.icon}</div>
+      <span class="menu-label">${m.label}</span>
+      <span class="menu-arrow">&#x203A;</span>
+    </div>
+  `).join('');
+  openSheet('menuSheet');
+}
+
+// ── Init ──
+try {
+  const saved = localStorage.getItem('sc_theme');
+  if (saved !== null) currentThemeIdx = parseInt(saved);
+} catch(e) {}
+applyTheme(currentThemeIdx);
+updateDisplay();
+
+function fitPhone() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const scale = Math.min(vw / 413, vh / 872, 1);
+  document.documentElement.style.setProperty('--phone-scale', scale);
+}
+fitPhone();
+window.addEventListener('resize', fitPhone);
+</script>
+</body>
+</html>
