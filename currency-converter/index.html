@@ -656,7 +656,7 @@ function updateSizeOptionBar() {
   } else if (cat.hasLetter) {
     row.style.display = '';
     bar.style.display = 'flex';
-    const label = currentLetter ? 'Size: ' + currentLetter : 'Size';
+    const label = currentLetter || 'Size';
     bar.innerHTML = `<button class="size-dropdown-pill" onclick="openSizeOptionSheet()">${label} <span class="pill-chevron">▼</span></button>`;
   } else {
     row.style.display = 'none';
