@@ -361,6 +361,7 @@
           <span class="fs-header-title">Menu</span>
         </div>
         <div class="menu-list">
+          <div class="menu-item" onclick="openPage('howToUsePage')"><div class="menu-icon">&#x1F4D6;</div><span class="menu-label">How to Use</span><span class="menu-arrow">&#x203A;</span></div>
           <div class="menu-item" onclick="openPage('settingsPage')"><div class="menu-icon">&#x2699;&#xFE0F;</div><span class="menu-label">Settings</span><span class="menu-arrow">&#x203A;</span></div>
           <div class="menu-item" onclick="openPage('aboutPage')"><div class="menu-icon">&#x2139;&#xFE0F;</div><span class="menu-label">About</span><span class="menu-arrow">&#x203A;</span></div>
           <div class="menu-item" onclick="openPage('privacyPage')"><div class="menu-icon">&#x1F512;</div><span class="menu-label">Privacy Policy</span><span class="menu-arrow">&#x203A;</span></div>
@@ -451,6 +452,40 @@
             <p style="font-size:14px;color:rgba(0,0,0,0.45);line-height:1.5;">Visit your favorite "Buy Me a Coffee" platform and search for the app developer. Thank you for your support!</p>
           </div>
           <p style="font-size:13px;color:rgba(0,0,0,0.3);line-height:1.5;">This app will always remain free to use with no ads or tracking.</p>
+        </div>
+      </div>
+
+      <!-- How to Use -->
+      <div class="fullscreen-page" id="howToUsePage">
+        <div class="fs-header">
+          <button class="fs-back-btn" onclick="closePage('howToUsePage')">&#x2039;</button>
+          <span class="fs-header-title">How to Use</span>
+        </div>
+        <div class="fs-content" style="padding:20px;color:#1a1a1a;">
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">1. Choose a Category</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Tap the category name at the top (e.g. "Dress") to pick what you want to convert &mdash; dresses, shoes, jeans, bras, and more.</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">2. Set Your Regions</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Tap a region code (e.g. "CA/US" or "UK") to change which country you're converting from or to. Tap the swap arrows to quickly flip them.</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">3. Enter Your Size</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Use the keypad to type your size number. The converted size appears automatically above. For shoes, use the decimal key for half sizes (e.g. 7.5).</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">4. Letter Sizes</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">For categories like Dress, Top, or Jacket, tap the "Size" button below the keypad to pick a letter size (S, M, L, XL, etc.) instead of typing a number.</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">5. Bra Sizes</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">For bras, enter the band size on the keypad and use the "Cup" button to select your cup size (A, B, C, etc.). The cup letter carries over to the converted size.</p>
+          </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:17px;font-weight:600;margin-bottom:6px;">Tips</div>
+            <p style="font-size:15px;line-height:1.5;color:rgba(0,0,0,0.6);">Long-press the backspace key to clear all input. Conversions are approximate &mdash; always check the brand's own size chart for the best fit.</p>
+          </div>
         </div>
       </div>
 
